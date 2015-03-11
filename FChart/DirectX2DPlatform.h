@@ -70,7 +70,7 @@ namespace fchart
 		//drawers
 		virtual void DrawRect(const Rect& rc, const BrushStyle& style) override;
 		virtual void DrawText(const Point& p, const wchar_t *str) override;
-		virtual void DrawLine(const Point& p0, const Point& p1) override;
+		virtual void DrawLine(const Point& p0, const Point& p1, const StrokeStyle& strokeStyle = StrokeStyle::Solid) override;
 		virtual void DrawCandlestick(const float y[4], const float& x) override;
 
 	
@@ -85,6 +85,8 @@ namespace fchart
 		IDWriteTextFormat *pTextFormat;
 		ID2D1Brush *pBrushFill;
 		ID2D1Brush *pBrushOutline;
+		ID2D1StrokeStyle *pStrokeDash;
+		ID2D1StrokeStyle *pStrokeDot;
 
 		D2D1::Matrix3x2F baseMatrix;
 		D2D1::Matrix3x2F translateMatrix;

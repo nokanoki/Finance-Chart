@@ -93,6 +93,7 @@ namespace fchart
 	};
 
 	enum class BrushStyle{ Fill, Outline };
+	enum class StrokeStyle { Solid, Dot, Dash };
 
 	class IPlatform
 		: public virtual IObject
@@ -114,7 +115,7 @@ namespace fchart
 
 		virtual void DrawRect(const Rect& rc, const BrushStyle& style) = 0;
 		virtual void DrawText(const Point& p, const wchar_t *str) = 0;
-		virtual void DrawLine(const Point& p0, const Point& p1) = 0;
+		virtual void DrawLine(const Point& p0, const Point& p1, const StrokeStyle& strokeStyle = StrokeStyle::Solid) = 0;
 
 		/*
 		y => high low open close

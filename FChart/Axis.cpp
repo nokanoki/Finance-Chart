@@ -5,7 +5,7 @@ Axis::Axis(IPlatform *pPlatform, const AxisProperties& props) :
 pPlatform(pPlatform), properties(props)
 {
 	pPlatform->AddRef();
-	this->pTextBrush = pPlatform->CreateBrush(makesolidbrushprps(0xffFFffFF));
+	this->pTextBrush = pPlatform->CreateBrush(makesolidbrushprps(0xafFFffFF));
 	this->pTextFormat = pPlatform->CreateTextFormat(maketextprps());
 }
 Axis::~Axis()
@@ -76,6 +76,7 @@ void Axis::DrawVertical()
 	{
 		pPlatform->DrawLine(
 			makepoint(this->rcAxis.left, i),
-			makepoint(this->rcAxis.right, i));
+			makepoint(this->rcAxis.right, i),
+			StrokeStyle::Dash);
 	}
 }

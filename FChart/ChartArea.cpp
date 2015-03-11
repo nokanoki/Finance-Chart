@@ -11,7 +11,7 @@ ChartArea::ChartArea(IPlatform *pPlatform) :
 pPlatform(pPlatform), pBrush(nullptr)
 {
 	this->pPlatform->AddRef();
-	this->pBrush = this->pPlatform->CreateBrush(makesolidbrushprps(0xff0000aa));
+	this->pBrush = this->pPlatform->CreateBrush(makesolidbrushprps(0xff000000));
 	AxisProperties props;
 	props.type = AxisType::Vertical; 
 	props.position = AxisPosition::Right;

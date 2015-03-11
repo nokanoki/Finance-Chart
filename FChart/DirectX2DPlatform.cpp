@@ -87,7 +87,9 @@ pWriteFactory(nullptr), pTextFormat(nullptr)
 		throw std::exception(__FUNCTION__ " D2D1Render initialization failed");
 	if (FAILED(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), reinterpret_cast<IUnknown**>( &this->pWriteFactory))))
 		throw std::exception(__FUNCTION__ " DWriteFactory initialization failed");
-
+	float dashes[] = { 5.0f, 7.0f, 2.0f };
+	if (FAILED(this->pFactory->CreateStrokeStyle(D2D1::StrokeStyleProperties(D2D1_CAP_STYLE_FLAT,D2D1_CAP_STYLE_FLAT,D2D1_CAP_STYLE_FLAT,D2D1_LINE_JOIN_MITER,10.f,D2D1_DASH_STYLE_CUSTOM),dashes,_countof(dashes),&this->pStrokeDash)))
+		throw std::exception(__FUNCTION__ " StrokeStyle initialization failed");
 
 	this->pRender->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
 	this->baseMatrix = D2D1::Matrix3x2F::Rotation(180.f, D2D1::Point2F(width / 2, height / 2))
@@ -106,6 +108,7 @@ PlatformD2D1::~PlatformD2D1()
 	if (this->pFactory) this->pFactory->Release();
 	if (this->pRender) this->pRender->Release();
 	if (this->pWriteFactory) this->pWriteFactory->Release();
+	if (this->pStrokeDash) this->pStrokeDash->Release();
 }
 
 void PlatformD2D1::AddEventMouseMove(IMouseMoveListener* listener)
@@ -195,6 +198,8 @@ void PlatformD2D1::DrawRect(const Rect& rc, const BrushStyle& style)
 {
 	if (style == BrushStyle::Fill)
 		this->pRender->FillRectangle(D2D1::RectF(rc.left, rc.top, rc.right, rc.bottom), this->pBrushFill);
+	else if (style == BrushStyle::Outline)
+		this->pRender->DrawRectangle(D2D1::RectF(rc.left, rc.top, rc.right, rc.bottom), this->pBrushFill);
 }
 
 void PlatformD2D1::DrawText(const Point& p, const wchar_t *str)
@@ -233,9 +238,18 @@ void PlatformD2D1::DrawText(const Point& p, const wchar_t *str)
 	this->pRender->SetTransform(this->baseMatrix * this->scaleMatrix * this->translateMatrix);
 }
 
-void PlatformD2D1::DrawLine(const Point& p0, const Point& p1)
+void PlatformD2D1::DrawLine(const Point& p0, const Point& p1, const StrokeStyle& strokeStyle)
 {
-	this->pRender->DrawLine(makepoint2f(p0), makepoint2f(p1), this->pBrushFill);
+	ID2D1StrokeStyle *pStroke;
+	switch (strokeStyle)
+	{
+	case StrokeStyle::Dash:
+		pStroke = this->pStrokeDash;
+		break;
+	default:
+		pStroke = nullptr;
+	}
+	this->pRender->DrawLine(makepoint2f(p0), makepoint2f(p1), this->pBrushFill, 1.f, pStroke);
 	
 }
 void PlatformD2D1::DrawCandlestick(const float y[4], const float& x)
