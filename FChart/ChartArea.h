@@ -24,6 +24,7 @@ namespace fchart
 		IPlatform *pPlatform;
 		Rect rcArea;
 		IBrush *pBrush;
+		Axis *pAxis;
 	
 	};
 }

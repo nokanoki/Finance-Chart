@@ -20,7 +20,7 @@ Chart::~Chart()
 void Chart::SetSize(const int32_t& width, const int32_t& height)
 {
 	this->pPlatform->SetSize(width, height);
-	this->testArea.SetRect(makerect(10.f, 10.f, width - 10, height - 10));
+	this->testArea.SetRect(makerect(100.f, height -100.f, width - 100.f, 100.f ));
 	this->Render();
 }
 

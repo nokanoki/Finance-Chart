@@ -30,10 +30,10 @@ namespace fchart
 		rc.bottom = bottom;
 		return rc;
 	}
-	enum BrushPropertiesType { BPT_SOLID, BPT_LINEAR_GRADIENT };
+	enum class BrushType { Solid, LinearGradient };
 	struct BrushProperties
 	{
-		int32_t type;
+		BrushType type;
 		int32_t colorCount;
 		int32_t color[1];
 	};
@@ -43,7 +43,7 @@ namespace fchart
 	__inline BrushProperties makesolidbrushprps(const int32_t& color){
 		BrushProperties bp;
 		bp.colorCount = 1;
-		bp.type = BPT_SOLID;
+		bp.type = BrushType::Solid;
 		bp.color[0] = color;
 		return bp;
 	}
@@ -56,7 +56,7 @@ namespace fchart
 	{
 		TextFormatProperties tfp;
 		wcscpy_s(tfp.family, L"Calibria");
-		tfp.fontSize = 16.f;
+		tfp.fontSize = 12.f;
 		return tfp;
 	}
 	struct MouseButtonsState
@@ -84,7 +84,16 @@ namespace fchart
 		virtual ~IBrush() = default;
 		virtual void GetProperties(BrushProperties& out) = 0;
 	};
+	class ITextFormat :
+		public virtual IObject
+	{
+	public:
+		virtual ~ITextFormat() = default;
+		virtual void GetProperties(TextFormatProperties& out) = 0;
+	};
+
 	enum class BrushStyle{ Fill, Outline };
+
 	class IPlatform
 		: public virtual IObject
 	{
@@ -92,27 +101,19 @@ namespace fchart
 
 	public:
 		virtual ~IPlatform() = default;
-		virtual void AddEventMouseMove( IMouseMoveListener* listener) = 0;
-		virtual void RemoveEventMouseMove( IMouseMoveListener* listener) = 0;
-
+		virtual void AddEventMouseMove(IMouseMoveListener* listener) = 0;
+		virtual void RemoveEventMouseMove(IMouseMoveListener* listener) = 0;
 		virtual void SetSize(const int32_t& width, const int32_t& height) = 0;
-
 		virtual void Begin() = 0;
 		virtual void End() = 0;
 		virtual IBrush* CreateBrush(const BrushProperties& props) = 0;
-		virtual void RemoveBrush(const int32_t& id) = 0;
-		virtual int32_t CreateTextFormat(const TextFormatProperties& props) = 0;
-		virtual void RemoveTextFormat(const int32_t& id) = 0;
-		virtual void SetTextFormat(const int32_t& id) = 0;
+		virtual ITextFormat* CreateTextFormat(const TextFormatProperties& props) = 0;
+		virtual void SetTextFormat(ITextFormat* pFormat) = 0;
 		virtual void SetBrush(IBrush* pBrush, const BrushStyle& style) = 0;
-		virtual void SetBrushFill(const int32_t& id) = 0;
-		virtual void SetBrushOutline(const int32_t& id) = 0;
+		
 
-		virtual void ClearRect(const Rect& rc) = 0;
-
+		virtual void DrawRect(const Rect& rc, const BrushStyle& style) = 0;
 		virtual void DrawText(const Point& p, const wchar_t *str) = 0;
-
-
 		virtual void DrawLine(const Point& p0, const Point& p1) = 0;
 
 		/*

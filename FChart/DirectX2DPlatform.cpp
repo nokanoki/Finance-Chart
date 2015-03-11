@@ -36,8 +36,26 @@ ID2D1Brush* BrushRef::GetBrush()
 {
 	return this->pBrush;
 }
+/*
+TextFormatRef imp
+*/
+TextFormatRef::TextFormatRef(IDWriteTextFormat *pFormat, const TextFormatProperties& props)
+	: pFormat(pFormat), props(props)
+{}
+TextFormatRef::~TextFormatRef()
+{
+	this->pFormat->Release();
+}
+void TextFormatRef::GetProperties(TextFormatProperties& out)
+{
+	out = this->props;
+}
+IDWriteTextFormat* TextFormatRef::GetFormat()
+{
+	return this->pFormat;
+}
 
-
+////
 __inline D2D1::ColorF makecolorf(const int32_t& color){
 	return D2D1::ColorF(
 		static_cast<UINT32>(color),
@@ -51,7 +69,7 @@ __inline D2D1_POINT_2F makepoint2f(const Point& p){
 
 PlatformD2D1::PlatformD2D1(HWND hParrent, int x, int y, int width, int height) :
 pRender(nullptr), pFactory(nullptr), pBrushOutline(nullptr), pBrushFill(nullptr),
-pWriteFactory(nullptr), pTextFormat(nullptr), _lastId(0)
+pWriteFactory(nullptr), pTextFormat(nullptr)
 {
 	WNDCLASSEX wc = { 0 };
 	wc.cbSize = sizeof wc;
@@ -88,12 +106,6 @@ PlatformD2D1::~PlatformD2D1()
 	if (this->pFactory) this->pFactory->Release();
 	if (this->pRender) this->pRender->Release();
 	if (this->pWriteFactory) this->pWriteFactory->Release();
-	
-
-	for (auto brush : this->brushes)
-		brush.second->Release();
-	for (auto textformat : this->textFormats)
-		textformat.second->Release();
 }
 
 void PlatformD2D1::AddEventMouseMove(IMouseMoveListener* listener)
@@ -133,25 +145,20 @@ void PlatformD2D1::End()
 IBrush* PlatformD2D1::CreateBrush(const BrushProperties& props)
 {
 	
-	if (props.type == BPT_SOLID)
+	if (props.type == BrushType::Solid)
 	{
-		
 		ID2D1SolidColorBrush *obj = nullptr;
 		/*todo checks*/
 		this->pRender->CreateSolidColorBrush(makecolorf(props.color[0]), &obj);
 		return new BrushRef(obj, props);
 	}
 }
-void PlatformD2D1::RemoveBrush(const int32_t& id)
-{
-	this->brushes[id]->Release();
-	this->brushes.erase(id);
-}
-int32_t PlatformD2D1::CreateTextFormat(const TextFormatProperties& props)
+
+ITextFormat* PlatformD2D1::CreateTextFormat(const TextFormatProperties& props)
 {
 	/*todo checks*/
 	IDWriteTextFormat *obj = nullptr;
-	int32_t id = this->GenerateId();
+	
 	this->pWriteFactory->CreateTextFormat(
 		props.family,
 		NULL,
@@ -161,20 +168,13 @@ int32_t PlatformD2D1::CreateTextFormat(const TextFormatProperties& props)
 		props.fontSize,
 		L"en-us",
 		&obj);
-	this->textFormats[id] = obj;
-	return id;
+	return new TextFormatRef(obj, props);
 
 }
-void PlatformD2D1::RemoveTextFormat(const int32_t& id)
+
+void PlatformD2D1::SetTextFormat(ITextFormat *pFormat)
 {
-	this->textFormats.erase(id);
-}
-void PlatformD2D1::SetTextFormat(const int32_t& id)
-{
-	auto find = this->textFormats.find(id);
-	if (find == this->textFormats.end())
-		throw std::exception(__FUNCTION__ " invalid id");
-	this->pTextFormat = find->second;
+	this->pTextFormat = dynamic_cast<TextFormatRef*>(pFormat)->GetFormat();
 }
 void PlatformD2D1::SetBrush(IBrush *pBrush, const BrushStyle& style)
 {
@@ -189,24 +189,12 @@ void PlatformD2D1::SetBrush(IBrush *pBrush, const BrushStyle& style)
 		break;
 	}
 }
-void PlatformD2D1::SetBrushFill(const int32_t& id)
-{
-	auto find = this->brushes.find(id);
-	if (find == this->brushes.end())
-		throw std::exception(__FUNCTION__ " invalid id");
-	this->pBrushFill = find->second;
-}
-void PlatformD2D1::SetBrushOutline(const int32_t& id)
-{
-	auto find = this->brushes.find(id);
-	if (find == this->brushes.end())
-		throw std::exception(__FUNCTION__ " invalid id");
-	this->pBrushOutline = find->second;
-}
 
-void PlatformD2D1::ClearRect(const Rect& rc)
+
+void PlatformD2D1::DrawRect(const Rect& rc, const BrushStyle& style)
 {
-	this->pRender->FillRectangle(D2D1::RectF(rc.left, rc.top, rc.right, rc.bottom), this->pBrushFill);
+	if (style == BrushStyle::Fill)
+		this->pRender->FillRectangle(D2D1::RectF(rc.left, rc.top, rc.right, rc.bottom), this->pBrushFill);
 }
 
 void PlatformD2D1::DrawText(const Point& p, const wchar_t *str)
@@ -241,7 +229,7 @@ void PlatformD2D1::DrawText(const Point& p, const wchar_t *str)
 	rc.bottom =  p0.y + fontSize * sizeY;
 	
 	this->pRender->SetTransform(D2D1::Matrix3x2F::Identity());
-	this->pRender->DrawText(str, totalSize, this->pTextFormat, rc, this->pBrushOutline);
+	this->pRender->DrawText(str, totalSize, this->pTextFormat, rc, this->pBrushFill);
 	this->pRender->SetTransform(this->baseMatrix * this->scaleMatrix * this->translateMatrix);
 }
 
@@ -294,10 +282,6 @@ Point PlatformD2D1::ScreenToClientCoords(const Point& p)
 	auto out = this->baseMatrix.TransformPoint(makepoint2f(p));
 	return makepoint(out.x, out.y);
 }
-int32_t PlatformD2D1::GenerateId()
-{
-	return this->_lastId++;
-}
 
 /*
 Wnd proc
@@ -311,7 +295,7 @@ LRESULT CALLBACK PlatformD2D1::ControlProc(HWND hWnd, UINT msg, WPARAM wParam, L
 	case WM_CREATE:
 		createStruct = reinterpret_cast<CREATESTRUCT*>(lParam);
 		SetWindowLong(hWnd, GWL_USERDATA, reinterpret_cast<LONG>(createStruct->lpCreateParams));
-	
+		
 		break;
 	case WM_MOUSEMOVE:
 	{

@@ -30,6 +30,18 @@ namespace fchart
 		ID2D1Brush *pBrush;
 		BrushProperties props;
 	};
+	class TextFormatRef
+		: public Object, public ITextFormat
+	{
+	public:
+		TextFormatRef(IDWriteTextFormat *pFormat, const TextFormatProperties& props);
+		virtual ~TextFormatRef() override;
+		virtual void GetProperties(TextFormatProperties& props) override;
+		IDWriteTextFormat* GetFormat();
+	private:
+		IDWriteTextFormat *pFormat;
+		TextFormatProperties props;
+	};
 
 
 	class PlatformD2D1 : 
@@ -46,30 +58,24 @@ namespace fchart
 
 		virtual void SetSize(const int32_t& width, const int32_t& height) override;
 
-		//drawers
+		
 		virtual void Begin() override;
 		virtual void End() override;
+
 		virtual IBrush* CreateBrush(const BrushProperties& props) override;
-		virtual void RemoveBrush(const int32_t& id) override;
-		virtual int32_t CreateTextFormat(const TextFormatProperties& props) override;
-		virtual void RemoveTextFormat(const int32_t& id) override;
-		virtual void SetTextFormat(const int32_t& id) override;
+		virtual ITextFormat* CreateTextFormat(const TextFormatProperties& props) override;
+		virtual void SetTextFormat(ITextFormat *pFormat) override;
 		virtual void SetBrush(IBrush* pBrush, const BrushStyle& style) override;
-		virtual void SetBrushFill(const int32_t& id) override;
-		virtual void SetBrushOutline(const int32_t& id) override;
-
-		virtual void ClearRect(const Rect& rc) override;
-
+		
+		//drawers
+		virtual void DrawRect(const Rect& rc, const BrushStyle& style) override;
 		virtual void DrawText(const Point& p, const wchar_t *str) override;
-
-
 		virtual void DrawLine(const Point& p0, const Point& p1) override;
 		virtual void DrawCandlestick(const float y[4], const float& x) override;
 
 	
 	private:
 		Point ScreenToClientCoords(const Point& p);
-		int32_t GenerateId();
 
 	private:
 		HWND hWnd;
@@ -84,11 +90,9 @@ namespace fchart
 		D2D1::Matrix3x2F translateMatrix;
 		D2D1::Matrix3x2F scaleMatrix;
 
-		int32_t _lastId;
 
 		std::vector<IMouseMoveListener*> mouseMoveCallbacks;
-		std::map<int32_t, ID2D1Brush*> brushes;
-		std::map<int32_t, IDWriteTextFormat*> textFormats;
+		
 		
 
 		

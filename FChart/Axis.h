@@ -3,35 +3,47 @@
 #include <map>
 namespace fchart
 {
-	struct _HighlightStruct
+	
+	
+	enum class AxisType{ Horizontal, Vertical };
+	enum class AxisPosition { Left, Top, Right, Bottom, UserDefine };
+	struct AxisProperties
 	{
-		int32_t brush;
-		int32_t textFormat;
-		float pos;
+		AxisType type;
+		AxisPosition position;
+		Rect rcUserDefine;
+		float lblFactor;
+		float gridFactor;
 	};
+	__inline AxisProperties makeaxiesproperties(AxisType type){
+		AxisProperties p;
+		p.type = type;
+		p.position = type == AxisType::Vertical ? AxisPosition::Right : AxisPosition::Bottom;
+		p.lblFactor = 20.f;
+		return p;
+	}
+
+
 	class Axis
 	{
 	public:
-		Axis(IPlatform *pPlatform);
+		Axis(IPlatform *pPlatform, const AxisProperties& props);
 		virtual ~Axis();
 
 		virtual void SetRect(const Rect& rc);
-
-		virtual int32_t CreateHighlight(const float& pos, const int32_t& bgcolor);
-		virtual void RemoveHighlight(const int32_t& id);
-		virtual void SetHighlight(const int32_t& id, const float& pos);
-
-
-
+		
+		
 		virtual void Draw();
 		
 	private:
+		void DrawVertical();
+
+
+	private:
 		IPlatform *pPlatform;
 		Rect rcAxis;
-		int32_t textFormat;
-		int32_t textBrush;
-		int32_t lastId;
-
-		std::map<int32_t, _HighlightStruct> highlights;
+		ITextFormat *pTextFormat;
+		IBrush *pTextBrush;
+		AxisProperties properties;
 	};
 }
