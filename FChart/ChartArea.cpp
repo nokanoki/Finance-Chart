@@ -21,12 +21,7 @@ pPlatform(pPlatform), pBrush(nullptr)
 
 	Quotation q[] = 
 	{
-		{ 1, 9.11, 8.8, 9.07, 9.06, 711257 },
-		{ 2, 9.14, 8.9, 9.06, 9.14, 882129 },
-		{ 3, 9.2, 8.93, 9.14, 9.1, 443237 },
-		{ 4, 9.1, 8.69, 9.1, 8.93, 988288 },
-		{ 5, 9.3, 8.81, 9.3, 9.14, 812503 },
-		{ 6, 9.2, 8.97, 9.2, 9.05, 705436 }
+#include "testquotes.array"
 	};
 	this->pSeries = new Series(this->pPlatform);
 	this->pSeries->AddData(q, _countof(q));
@@ -92,7 +87,7 @@ void ChartArea::OnMouseMove(const MouseEventArgs& e)
 		transformation.ty += mouse.y - mouse.ylast;
 	}
 
-	this->transformation.sy = 50.f;
+	this->transformation.sy = 100.f;
 
 	this->pSeries->SetTransformation(transformation);
 	this->pAxis->SetTransformation(transformation);
