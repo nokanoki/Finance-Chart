@@ -3,6 +3,17 @@
 #include <stdint.h>
 namespace fchart
 {
+	struct Quotation
+	{
+		time_t time;
+		float high, low, open, close;
+		int volume;
+	};
+	struct Transformation
+	{
+		float sx, sy;
+		float tx, ty;
+	};
 	class IObject
 	{
 	public:

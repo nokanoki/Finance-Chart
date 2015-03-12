@@ -71,6 +71,7 @@
     <ClCompile Include="DllMain.cpp" />
     <ClCompile Include="fchart_factory.cpp" />
     <ClCompile Include="Object.cpp" />
+    <ClCompile Include="Series.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="api.h" />
@@ -81,6 +82,7 @@
     <ClInclude Include="Platform.h" />
     <ClInclude Include="ProjectOptions.h" />
     <ClInclude Include="Object.h" />
+    <ClInclude Include="Series.h" />
     <ClInclude Include="Types.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

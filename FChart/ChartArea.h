@@ -2,6 +2,7 @@
 #include "api.h"
 #include "Platform.h"
 #include "Axis.h"
+#include "Series.h"
 
 namespace fchart
 {
@@ -25,6 +26,18 @@ namespace fchart
 		Rect rcArea;
 		IBrush *pBrush;
 		Axis *pAxis;
+		Series *pSeries;
+		IBrush *pBrushRed, *pBrushGreen;
+
+		/*Test*/
+		Transformation transformation;
+		struct
+		{
+			bool isDragging;
+			float xstart, ystart;
+			float x, y;
+			float xlast, ylast;
+		}mouse;
 	
 	};
 }

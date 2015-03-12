@@ -31,6 +31,7 @@ namespace fchart
 		virtual ~Axis();
 
 		virtual void SetRect(const Rect& rc);
+		virtual void SetTransformation(const Transformation& trans);
 		
 		
 		virtual void Draw();
@@ -45,5 +46,7 @@ namespace fchart
 		ITextFormat *pTextFormat;
 		IBrush *pTextBrush;
 		AxisProperties properties;
+		Transformation transformation;
+		
 	};
 }

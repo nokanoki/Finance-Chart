@@ -22,6 +22,7 @@ namespace fchart
 		float right;
 		float bottom;
 	};
+	
 	__inline Rect makerect(const float& left, const float& top, const float& right, const float& bottom){
 		Rect rc;
 		rc.top = top;
@@ -30,6 +31,7 @@ namespace fchart
 		rc.bottom = bottom;
 		return rc;
 	}
+
 	enum class BrushType { Solid, LinearGradient };
 	struct BrushProperties
 	{

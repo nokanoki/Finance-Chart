@@ -326,6 +326,7 @@ LRESULT CALLBACK PlatformD2D1::ControlProc(HWND hWnd, UINT msg, WPARAM wParam, L
 			listener->OnMouseMove(args);
 	}
 		break;
+	
 	default:
 		return DefWindowProc(hWnd, msg, wParam, lParam); 
 	}

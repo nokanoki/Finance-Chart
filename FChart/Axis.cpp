@@ -7,6 +7,10 @@ pPlatform(pPlatform), properties(props)
 	pPlatform->AddRef();
 	this->pTextBrush = pPlatform->CreateBrush(makesolidbrushprps(0xafFFffFF));
 	this->pTextFormat = pPlatform->CreateTextFormat(maketextprps());
+	this->transformation.sx = 1.f;
+	this->transformation.sy = 1.f;
+	this->transformation.tx = 0.f;
+	this->transformation.ty = 0.f;
 }
 Axis::~Axis()
 {
@@ -21,7 +25,10 @@ void Axis::SetRect(const Rect& rc)
 	this->rcAxis = rc;
 	
 }
-
+void Axis::SetTransformation(const Transformation& trans)
+{
+	this->transformation = trans;
+}
 
 
 
@@ -68,7 +75,8 @@ void Axis::DrawVertical()
 	
 	for (float i = bottom; i < top; i += this->properties.lblFactor)
 	{
-		pPlatform->DrawText(makepoint(left, i + this->properties.lblFactor/2.f), std::to_wstring(i).c_str());
+		
+		pPlatform->DrawText(makepoint(left, i + this->properties.lblFactor / 2.f), std::to_wstring((i - transformation.ty) / transformation.sy).c_str());
 	}
 
 	//draw grid
@@ -77,6 +85,6 @@ void Axis::DrawVertical()
 		pPlatform->DrawLine(
 			makepoint(this->rcAxis.left, i),
 			makepoint(this->rcAxis.right, i),
-			StrokeStyle::Dash);
+			StrokeStyle::Solid);
 	}
 }

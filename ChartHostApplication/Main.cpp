@@ -78,7 +78,7 @@ LRESULT CALLBACK proc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		
 		chart->Render();
 		
-		ValidateRect(hWnd, NULL);
+		//ValidateRect(hWnd, NULL);
 		break;
 	case WM_CLOSE:
 		chart->Release();

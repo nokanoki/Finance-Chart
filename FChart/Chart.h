@@ -28,5 +28,6 @@ namespace fchart
 		/* TEST AREA
 		*/
 		ChartArea testArea;
+
 	};
 }
