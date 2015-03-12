@@ -57,10 +57,10 @@ void ChartArea::Draw()
 	this->pPlatform->SetBrush(this->pBrush, BrushStyle::Fill);
 	this->pPlatform->DrawRect(this->rcArea, BrushStyle::Fill);
 
-	
-	this->pSeries->Draw();
 	this->pAxisY->Draw();
 	this->pAxisX->Draw();
+	this->pSeries->Draw();
+	
 }
 
 
