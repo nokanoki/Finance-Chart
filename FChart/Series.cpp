@@ -38,8 +38,7 @@ void Series::AddData(const Quotation *pData, const int32_t& count)
 void Series::Draw()
 {
 	int i = 0;
-	this->pPlatform->SetBrush(this->pBrushGreen, BrushStyle::Fill);
-	this->pPlatform->SetBrush(this->pBrushWhite, BrushStyle::Outline);
+	
 	for (auto q : this->data)
 	{
 		float a = transformation.sy ;
@@ -49,7 +48,17 @@ void Series::Draw()
 			q.open * a + transformation.ty,
 			q.close * a + transformation.ty };
 		float x = (i += 10) * transformation.sx + transformation.tx;
+		
+		//check overflow
+		if ( x > this->rcSeries.right)
+			break;//nothing else to draw
+		if (x < this->rcSeries.left)
+			continue;//skip that
+		if (y[1] > this->rcSeries.top || y[0] < this->rcSeries.bottom)//candle isnt visible
+			continue; //skip that
 
+
+		this->pPlatform->SetBrush(this->pBrushWhite, BrushStyle::Outline);
 		//is up
 		if (y[2] <= y[3])
 		{
@@ -59,8 +68,18 @@ void Series::Draw()
 		else
 		{
 			this->pPlatform->SetBrush(this->pBrushRed, BrushStyle::Fill);
-			;
 		}
+
+		//check candles body overflow
+		if (y[0] > this->rcSeries.top) y[0] = this->rcSeries.top;
+		if (y[1] > this->rcSeries.top) y[1] = this->rcSeries.top;
+		if (y[2] > this->rcSeries.top) y[2] = this->rcSeries.top;
+		if (y[3] > this->rcSeries.top) y[3] = this->rcSeries.top;
+
+		if (y[0] < this->rcSeries.bottom) y[0] = this->rcSeries.bottom;
+		if (y[1] < this->rcSeries.bottom) y[1] = this->rcSeries.bottom;
+		if (y[2] < this->rcSeries.bottom) y[2] = this->rcSeries.bottom;
+		if (y[3] < this->rcSeries.bottom) y[3] = this->rcSeries.bottom;
 		
 		this->pPlatform->DrawCandlestick(y , x);
 	}

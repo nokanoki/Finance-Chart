@@ -14,6 +14,14 @@ namespace fchart
 		float sx, sy;
 		float tx, ty;
 	};
+	__inline Transformation maketransformation(const float& sx = 1.f, const float& sy = 1.f, const float& tx = 0.f, const float& ty = 0.f){
+		Transformation t;
+		t.sx = sx;
+		t.sy = sy;
+		t.tx = tx;
+		t.ty = ty;
+		return t;
+	}
 	class IObject
 	{
 	public:

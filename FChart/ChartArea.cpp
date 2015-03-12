@@ -12,12 +12,10 @@ pPlatform(pPlatform), pBrush(nullptr)
 {
 	this->pPlatform->AddRef();
 	this->pBrush = this->pPlatform->CreateBrush(makesolidbrushprps(0xff000000));
-	AxisProperties props;
-	props.type = AxisType::Vertical; 
-	props.position = AxisPosition::Right;
-	props.lblFactor = 20.f;
-	props.gridFactor = 40.f;
-	this->pAxis = new Axis(pPlatform,props);
+
+	this->pAxisY = new Axis(pPlatform, AxisType::Vertical);
+	this->pAxisX = new Axis(pPlatform, AxisType::Horizontal);
+	this->pAxisX->SetDataType(AxisDataType::Date);
 
 	Quotation q[] = 
 	{
@@ -25,6 +23,8 @@ pPlatform(pPlatform), pBrush(nullptr)
 	};
 	this->pSeries = new Series(this->pPlatform);
 	this->pSeries->AddData(q, _countof(q));
+	
+	this->pAxisX->SetData(std::vector<Quotation>(q, q + _countof(q)));
 
 	this->transformation.sx = 1.f;
 	this->transformation.sy = 1.f;
@@ -34,7 +34,8 @@ pPlatform(pPlatform), pBrush(nullptr)
 
 ChartArea::~ChartArea()
 {
-	delete pAxis;
+	delete pAxisX;
+	delete pAxisY;
 	delete pSeries;
 	this->pPlatform->Release();
 	this->pBrush->Release();
@@ -42,7 +43,8 @@ ChartArea::~ChartArea()
 void ChartArea::SetRect(const Rect& rc)
 {
 	this->rcArea = rc;
-	this->pAxis->SetRect(rc);
+	this->pAxisY->SetRect(rc);
+	this->pAxisX->SetRect(rc);
 	this->pSeries->SetRect(rc);
 	
 }
@@ -57,7 +59,8 @@ void ChartArea::Draw()
 
 	
 	this->pSeries->Draw();
-	this->pAxis->Draw();
+	this->pAxisY->Draw();
+	this->pAxisX->Draw();
 }
 
 
@@ -90,5 +93,6 @@ void ChartArea::OnMouseMove(const MouseEventArgs& e)
 	this->transformation.sy = 100.f;
 
 	this->pSeries->SetTransformation(transformation);
-	this->pAxis->SetTransformation(transformation);
+	this->pAxisX->SetTransformation(transformation);
+	this->pAxisY->SetTransformation(transformation);
 }
