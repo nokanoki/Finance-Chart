@@ -85,9 +85,6 @@
     <ClInclude Include="Series.h" />
     <ClInclude Include="Types.h" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="testquotes.array" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -51,7 +51,31 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 }
 
 fchart::IChart *chart;
+fchart::Quotation q[] = 
+{
+#include "testquotes.array"
+};
 
+void initchart()
+{
+	//TEST TEST TEST TEST TEST 
+	auto chartArea = chart->CreateChartArea();
+	auto axisX = chartArea->CreateAxis(fchart::AxisType::Horizontal);
+	auto axisY = chartArea->CreateAxis(fchart::AxisType::Vertical);
+	auto series = chartArea->CreateSeries();
+	series->AddData(q, _countof(q));
+	chartArea->AddAxis(axisX);
+	chartArea->AddAxis(axisY);
+	chartArea->SetSeries(series);
+	chart->AddChartArea(chartArea);
+	chartArea->SetRect(fchart::makerect(100.f, 600.f, 900.f, 100.f));
+	axisX->SetDataType(fchart::AxisDataType::Date);
+	chartArea->Release();
+	axisX->Release();
+	axisY->Release();
+	series->Release();
+	
+}
 
 LRESULT CALLBACK proc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -67,6 +91,7 @@ LRESULT CALLBACK proc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		s.width = 100;
 		s.ppOut = reinterpret_cast<void**>(&chart);
 		factory(&s);
+		initchart();
 		break;
 	case WM_SIZE:
 		p.x = GET_X_LPARAM(lParam);

@@ -5,32 +5,7 @@
 #include <stdint.h>
 namespace fchart
 {
-	struct Point
-	{
-		float x, y;
-	};
-	__inline Point makepoint(const float& x, const float& y){
-		Point p;
-		p.x = x;
-		p.y = y;
-		return p;
-	}
-	struct Rect
-	{
-		float left;
-		float top;
-		float right;
-		float bottom;
-	};
 	
-	__inline Rect makerect(const float& left, const float& top, const float& right, const float& bottom){
-		Rect rc;
-		rc.top = top;
-		rc.left = left;
-		rc.right = right;
-		rc.bottom = bottom;
-		return rc;
-	}
 
 	enum class BrushType { Solid, LinearGradient };
 	struct BrushProperties

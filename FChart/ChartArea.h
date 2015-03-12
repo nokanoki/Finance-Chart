@@ -7,8 +7,7 @@
 namespace fchart
 {
 	class ChartArea 
-		: public Object,
-		public IMouseMoveListener
+		: public IChartArea, public virtual Object, public IMouseMoveListener
 	{
 	public:
 		ChartArea(IPlatform *pPlatform);
@@ -16,18 +15,22 @@ namespace fchart
 		
 		virtual void SetRect(const Rect& rc);
 		virtual void SetBackground(const int32_t& color, bool drawBg = true);
-
 		virtual void Draw();
-
 		virtual void OnMouseMove(const MouseEventArgs& args) override;
+		virtual IAxis* CreateAxis(const AxisType& type) override;
+		virtual void AddAxis(IAxis* pAxis) override;
+		virtual ISeries* CreateSeries() override;
+		//rename that
+		virtual void SetSeries(ISeries* series) override;
+		virtual void AddData(const Quotation*, const int32_t& count) override;
 
 	private:
 		IPlatform *pPlatform;
 		Rect rcArea;
 		IBrush *pBrush;
-		Axis *pAxisY;
-		Axis *pAxisX;
-		Series *pSeries;
+		std::vector<Axis*> axies;
+		std::vector<Series*> series;
+		std::vector<Quotation> data;
 		IBrush *pBrushRed, *pBrushGreen;
 
 		/*Test*/

@@ -1,17 +1,15 @@
 #pragma once
 #include "Platform.h"
+#include "api.h"
 #include <map>
 #include <vector>
 namespace fchart
 {
 	
 	
-	enum class AxisType{ Horizontal, Vertical };
-	enum class AxisPosition { Left, Top, Right, Bottom, UserDefine };
-	enum class AxisDataType { Price, Time, Date };
-
 
 	class Axis
+		: public IAxis, public virtual Object
 	{
 	public:
 		Axis(IPlatform *pPlatform, const AxisType& type);

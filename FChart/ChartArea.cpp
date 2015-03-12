@@ -11,41 +11,26 @@ ChartArea::ChartArea(IPlatform *pPlatform) :
 pPlatform(pPlatform), pBrush(nullptr)
 {
 	this->pPlatform->AddRef();
-	this->pBrush = this->pPlatform->CreateBrush(makesolidbrushprps(0xff000000));
-
-	this->pAxisY = new Axis(pPlatform, AxisType::Vertical);
-	this->pAxisX = new Axis(pPlatform, AxisType::Horizontal);
-	this->pAxisX->SetDataType(AxisDataType::Date);
-
-	Quotation q[] = 
-	{
-#include "testquotes.array"
-	};
-	this->pSeries = new Series(this->pPlatform);
-	this->pSeries->AddData(q, _countof(q));
-	
-	this->pAxisX->SetData(std::vector<Quotation>(q, q + _countof(q)));
-
-	this->transformation.sx = 1.f;
-	this->transformation.sy = 1.f;
-	this->transformation.tx = 0.f;
-	this->transformation.ty = 0.f;
+	this->pBrush = this->pPlatform->CreateBrush(makesolidbrushprps(0xff0f0f0f));
+	this->transformation = maketransformation();
 }
-
 ChartArea::~ChartArea()
 {
-	delete pAxisX;
-	delete pAxisY;
-	delete pSeries;
+	for (auto axis : this->axies)
+		axis->Release();
+	for (auto s : this->series)
+		s->Release();
+
 	this->pPlatform->Release();
 	this->pBrush->Release();
 }
 void ChartArea::SetRect(const Rect& rc)
 {
 	this->rcArea = rc;
-	this->pAxisY->SetRect(rc);
-	this->pAxisX->SetRect(rc);
-	this->pSeries->SetRect(rc);
+	for (auto axis : this->axies)
+		axis->SetRect(rc);
+	for (auto s : this->series)
+		s->SetRect(rc);
 	
 }
 void ChartArea::SetBackground(const int32_t& color, bool drawBg)
@@ -57,15 +42,22 @@ void ChartArea::Draw()
 	this->pPlatform->SetBrush(this->pBrush, BrushStyle::Fill);
 	this->pPlatform->DrawRect(this->rcArea, BrushStyle::Fill);
 
-	this->pAxisY->Draw();
-	this->pAxisX->Draw();
-	this->pSeries->Draw();
+	for (auto axis : this->axies)
+		axis->Draw();
+	for (auto s : this->series)
+		s->Draw();
 	
 }
 
 
 void ChartArea::OnMouseMove(const MouseEventArgs& e)
 {
+	//is in area?
+	if (e.x < this->rcArea.left
+		|| e.x > this->rcArea.right
+		|| e.y > this->rcArea.top
+		|| e.y < this->rcArea.bottom)
+		return;
 	if (e.buttonState.left)
 	{
 		if (!mouse.isDragging)
@@ -92,7 +84,37 @@ void ChartArea::OnMouseMove(const MouseEventArgs& e)
 
 	this->transformation.sy = 100.f;
 
-	this->pSeries->SetTransformation(transformation);
-	this->pAxisX->SetTransformation(transformation);
-	this->pAxisY->SetTransformation(transformation);
+	
+	for (auto axis : this->axies)
+		axis->SetTransformation(transformation);
+	for (auto s : this->series)
+		s->SetTransformation(transformation);
+}
+
+IAxis* ChartArea::CreateAxis(const AxisType& type)
+{
+	return new Axis(this->pPlatform, type);
+}
+void ChartArea::AddAxis(IAxis* pAxis)
+{
+	this->axies.push_back(dynamic_cast<Axis*>(pAxis));
+	pAxis->AddRef();
+}
+ISeries* ChartArea::CreateSeries()
+{
+	return new Series(this->pPlatform);
+}
+//rename that
+void ChartArea::SetSeries(ISeries *pSeries)
+{
+	this->series.push_back(dynamic_cast<Series*>(pSeries));
+	pSeries->AddRef();
+	for (auto a : this->axies)
+		a->SetData(dynamic_cast<Series*>(pSeries)->GetData());
+}
+void ChartArea::AddData(const Quotation* pData, const int32_t& count)
+{
+	std::copy(pData, pData + count, std::back_inserter(this->data));
+
+
 }

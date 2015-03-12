@@ -16,7 +16,8 @@ namespace fchart
 
 		virtual void SetSize(const int32_t& width, const int32_t& height) override;
 
-
+		virtual IChartArea* CreateChartArea() override;
+		virtual void AddChartArea(IChartArea* chartArea) override;
 
 		virtual void Render();
 
@@ -24,10 +25,7 @@ namespace fchart
 
 	private:
 		IPlatform *pPlatform;
-
-		/* TEST AREA
-		*/
-		ChartArea testArea;
+		std::vector<ChartArea*> chartAreas;
 
 	};
 }

@@ -5,32 +5,38 @@ using namespace fchart;
 
 Chart::Chart(IPlatform *platform)
 	:pPlatform(platform)
-	, testArea(pPlatform)
 {
 	platform->AddRef();
-	testArea.SetRect(makerect(100, 100, 50, 10));
-	testArea.SetBackground(0xff000099);
-	platform->AddEventMouseMove(&testArea);
 	platform->AddEventMouseMove(this);
 }
 Chart::~Chart()
 {
+	for (auto chartArea : this->chartAreas)
+		chartArea->Release();
 	pPlatform->Release();
 }
 void Chart::SetSize(const int32_t& width, const int32_t& height)
 {
 	this->pPlatform->SetSize(width, height);
-	this->testArea.SetRect(makerect(100.f, height -100.f, width - 100.f, 100.f ));
 	this->Render();
 }
 
-
-
+IChartArea* Chart::CreateChartArea()
+{
+	return new ChartArea(pPlatform);
+}
+void Chart::AddChartArea(IChartArea *pChartArea)
+{
+	this->chartAreas.push_back(dynamic_cast<ChartArea*> (pChartArea));
+	this->pPlatform->AddEventMouseMove(dynamic_cast<ChartArea*>(pChartArea));
+	pChartArea->AddRef();
+}
 
 void Chart::Render()
 {
 	this->pPlatform->Begin();
-	this->testArea.Draw();
+	for (auto chartArea : this->chartAreas)
+		chartArea->Draw();
 	this->pPlatform->End();
 }
 

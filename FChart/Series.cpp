@@ -10,7 +10,7 @@ pPlatform(pPlatform)
 	this->pBrushRed = this->pPlatform->CreateBrush(makesolidbrushprps(0xffFF0000));
 	this->pBrushWhite = this->pPlatform->CreateBrush(makesolidbrushprps(0xffFFffFF));
 	this->transformation = maketransformation();
-	this->seriesType = SeriesType::Band;
+	this->seriesType = SeriesType::Line;
 }
 Series::~Series()
 {
@@ -36,7 +36,10 @@ void Series::AddData(const Quotation *pData, const int32_t& count)
 {
 	std::copy(pData, pData + count, std::back_inserter(this->data));
 }
-
+std::vector<Quotation> Series::GetData()
+{
+	return this->data;
+}
 void Series::Draw()
 {
 	int i = 0;
