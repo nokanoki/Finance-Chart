@@ -17,6 +17,7 @@ pPlatform(pPlatform), axisType(type), chartArea(pChartArea)
 	this->gridFactor = 20.f;
 	this->dataPointWidth = 10.f;//ref Series::Draw candlestick
 	this->axisDataType = AxisDataType::Price;
+	this->axisSize = this->axisType == AxisType::Vertical ? 100.f : 16.f;
 }
 Axis::~Axis()
 {
@@ -61,10 +62,10 @@ void Axis::DrawVertical()
 	{
 	case AxisPosition::Right:
 		left = this->rcAxis.right;
-		right = this->rcAxis.right + 100.f;
+		right = this->rcAxis.right + this->axisSize;
 		break;
 	case AxisPosition::Left:
-		left = this->rcAxis.left -100.f;
+		left = this->rcAxis.left - this->axisSize;
 		right = this->rcAxis.left;
 		break;
 	default:
@@ -98,11 +99,11 @@ void Axis::DrawHorizontal()
 	{
 	case AxisPosition::Bottom:
 		top = this->rcAxis.bottom;
-		bottom = top - 20.f;
+		bottom = top;// +this->axisSize; ??? wtf?
 		break;
 	case AxisPosition::Top:
 		bottom = this->rcAxis.top;
-		top = bottom + 20.f;
+		top = bottom + this->axisSize;
 		break;
 	default:
 		break;
@@ -160,4 +161,12 @@ IAxis* Axis::SetDataType(const AxisDataType& type)
 {
 	this->axisDataType = type;
 	return this;
+}
+const AxisType& Axis::GetAxisType()
+{
+	return this->axisType;
+}
+float Axis::GetAxisSize()
+{
+	return this->axisSize;
 }

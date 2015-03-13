@@ -30,10 +30,18 @@ ChartArea::~ChartArea()
 IChartArea* ChartArea::SetRect(const Rect& rc)
 {
 	this->rcArea = rc;
+	Rect rcSeries = rc;
 	for (auto axis : this->axies)
-		axis.second->SetRect(rc);
+	{
+		if (axis.second->GetAxisType() == AxisType::Vertical)
+			rcSeries.right -= axis.second->GetAxisSize();
+		else
+			rcSeries.bottom += axis.second->GetAxisSize();
+		axis.second->SetRect(rcSeries);
+	}
+	
 	for (auto s : this->series)
-		s.second->SetRect(rc);
+		s.second->SetRect(rcSeries);
 	return this;
 }
 void ChartArea::SetBackground(const int32_t& color, bool drawBg)
@@ -114,4 +122,9 @@ ISeries* ChartArea::CreateSeries(const wchar_t* name)
 ISeries* ChartArea::GetSeries(const wchar_t* name)
 {
 	return this->series[name];
+}
+
+const Rect& ChartArea::GetRect()
+{
+	return this->rcArea;
 }

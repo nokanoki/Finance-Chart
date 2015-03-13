@@ -4,8 +4,11 @@
 #include "Axis.h"
 #include "Series.h"
 #include <map>
+
 namespace fchart
 {
+
+
 	class ChartArea 
 		: public IChartArea, public virtual Object, public IMouseMoveListener
 	{
@@ -21,7 +24,8 @@ namespace fchart
 		virtual IAxis* GetAxis(const wchar_t* name) override;
 		virtual ISeries* CreateSeries(const wchar_t* name) override;
 		virtual ISeries* GetSeries(const wchar_t* name) override;
-		
+
+		const Rect& GetRect();
 
 
 	private:

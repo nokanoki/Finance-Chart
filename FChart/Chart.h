@@ -4,6 +4,7 @@
 #include "Platform.h"
 #include "ChartArea.h"
 #include <map>
+#include <list>
 namespace fchart
 {
 	class Chart :
@@ -19,6 +20,7 @@ namespace fchart
 
 		virtual IChartArea* CreateChartArea(const wchar_t* name) override;
 		virtual IChartArea* GetChartArea(const wchar_t* name) override;
+		virtual IChart* SetAreaChartPositionType(const ChartAreaPositionType& type) override;
 		virtual void Render();
 
 		virtual void OnMouseMove(const MouseEventArgs& e) override;
@@ -26,7 +28,8 @@ namespace fchart
 	private:
 		Rect rcChart;
 		IPlatform *pPlatform;
-		std::map<std::wstring,ChartArea*> chartAreas;
+		ChartAreaPositionType chartAreaPositionType;
+		std::list<std::pair<std::wstring,ChartArea*>> chartAreas;
 
 	};
 }

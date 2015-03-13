@@ -76,7 +76,6 @@ namespace fchart
 		
 	};
 
-
 	class IChartArea
 	{
 	public:
@@ -88,6 +87,7 @@ namespace fchart
 		virtual ISeries* GetSeries(const wchar_t* name) = 0;
 
 	};
+	enum class ChartAreaPositionType{ Stack };
 
 	class IChart
 		: public virtual IObject
@@ -97,6 +97,7 @@ namespace fchart
 		virtual void SetSize(const int32_t& width, const int32_t& height) = 0;
 		virtual IChartArea* CreateChartArea(const wchar_t* name) = 0;
 		virtual IChartArea* GetChartArea(const wchar_t* name) = 0;
+		virtual IChart* SetAreaChartPositionType(const ChartAreaPositionType& type) = 0;
 		virtual void Render() = 0;
 
 	};

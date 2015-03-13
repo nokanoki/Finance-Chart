@@ -20,6 +20,9 @@ namespace fchart
 		virtual void SetTransformation(const Transformation& trans);
 		/*TEST*/
 		virtual IAxis* SetDataType(const AxisDataType& type);
+		virtual const AxisType& GetAxisType();
+		virtual float GetAxisSize();
+		
 
 		virtual void Draw();
 		
@@ -41,6 +44,7 @@ namespace fchart
 		
 		float lblFactor;
 		float gridFactor;
+		float axisSize;
 
 		/*TEST*/
 		float dataPointWidth;
