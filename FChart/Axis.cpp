@@ -118,7 +118,7 @@ void Axis::DrawHorizontal()
 			break;
 		case AxisDataType::Date:
 		{
-			size_t idx = ((i - this->transformation.tx) /this->transformation.sx)  / this->dataPointWidth;
+			size_t idx = static_cast<size_t>(((i - this->transformation.tx) /this->transformation.sx)  / this->dataPointWidth);
 			if (idx <= 0 || idx >= this->data.size())
 				break;
 			wchar_t buf[256] = { 0 };
@@ -130,7 +130,7 @@ void Axis::DrawHorizontal()
 			break;
 		case AxisDataType::Time:
 		{
-			size_t idx = ((i - this->transformation.tx) / this->transformation.sx) / this->dataPointWidth;
+			size_t idx = static_cast<size_t>(((i - this->transformation.tx) / this->transformation.sx) / this->dataPointWidth);
 			if (idx <= 0 || idx >= this->data.size())
 				break;
 			wchar_t buf[256] = { 0 };

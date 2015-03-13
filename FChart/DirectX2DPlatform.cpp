@@ -92,9 +92,9 @@ pWriteFactory(nullptr), pTextFormat(nullptr)
 		throw std::exception(__FUNCTION__ " StrokeStyle initialization failed");
 
 	this->pRender->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
-	this->baseMatrix = D2D1::Matrix3x2F::Rotation(180.f, D2D1::Point2F(width / 2, height / 2))
+	this->baseMatrix = D2D1::Matrix3x2F::Rotation(180.f, D2D1::Point2F(width / 2.f, height / 2.f))
 		* D2D1::Matrix3x2F::Scale(D2D1::SizeF(-1.f, 1.f))
-		* D2D1::Matrix3x2F::Translation(D2D1::SizeF(width,0));
+		* D2D1::Matrix3x2F::Translation(D2D1::SizeF(static_cast<float>(width),0));
 	this->pRender->SetTransform(this->baseMatrix);
 	this->translateMatrix = D2D1::Matrix3x2F::Identity();
 	this->scaleMatrix = D2D1::Matrix3x2F::Identity();
@@ -128,7 +128,7 @@ void PlatformD2D1::SetSize(const int32_t& width, const int32_t& height)
 	
 	this->baseMatrix = D2D1::Matrix3x2F::Rotation(180.f, D2D1::Point2F(width / 2.f, height / 2.f))
 		* D2D1::Matrix3x2F::Scale(D2D1::SizeF(-1.f, 1.f))
-		* D2D1::Matrix3x2F::Translation(D2D1::SizeF(width, 0));
+		* D2D1::Matrix3x2F::Translation(D2D1::SizeF(static_cast<float>(width), 0.f));
 	this->pRender->SetTransform(this->baseMatrix * this->scaleMatrix * this->translateMatrix);
 }
 
@@ -155,6 +155,7 @@ IBrush* PlatformD2D1::CreateBrush(const BrushProperties& props)
 		this->pRender->CreateSolidColorBrush(makecolorf(props.color[0]), &obj);
 		return new BrushRef(obj, props);
 	}
+	return nullptr;
 }
 
 ITextFormat* PlatformD2D1::CreateTextFormat(const TextFormatProperties& props)
@@ -314,13 +315,13 @@ LRESULT CALLBACK PlatformD2D1::ControlProc(HWND hWnd, UINT msg, WPARAM wParam, L
 	case WM_MOUSEMOVE:
 	{
 		MouseEventArgs args;
-		Point p = _this->ScreenToClientCoords(makepoint(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)));
+		Point p = _this->ScreenToClientCoords(makepoint(static_cast<float>(GET_X_LPARAM(lParam)), static_cast<float>(GET_Y_LPARAM(lParam))));
 		args.x = p.x;
 		args.y = p.y;
 		
-		args.buttonState.left = (bool) (wParam & MK_LBUTTON);
-		args.buttonState.right = (bool) (wParam & MK_RBUTTON);
-		args.buttonState.mid = (bool) (wParam & MK_MBUTTON);
+		args.buttonState.left = static_cast<bool> (wParam & MK_LBUTTON);
+		args.buttonState.right = static_cast<bool> (wParam & MK_RBUTTON);
+		args.buttonState.mid = static_cast<bool> (wParam & MK_MBUTTON);
 
 		for (auto listener : _this->mouseMoveCallbacks)
 			listener->OnMouseMove(args);
