@@ -129,6 +129,7 @@ LRESULT CALLBACK proc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		//ScreenToClient(hWnd, &p);
 		chart->SetSize(p.x,p.y);
 		break;
+		
 	case WM_PAINT:
 		
 		chart->Render();

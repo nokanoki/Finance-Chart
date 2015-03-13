@@ -27,21 +27,18 @@ void Chart::SetSize(const int32_t& width, const int32_t& height)
 		if (!this->chartAreas.empty())
 		{
 			
-			float height = this->chartAreas.front().second->GetRect().top 
-				- this->chartAreas.back().second->GetRect().bottom;
-			float space = (this->rcChart.top - this->rcChart.bottom) - height;
-			float spacePerArea = space / static_cast<float>(this->chartAreas.size());
-
-			auto rit = this->chartAreas.rbegin();
-			Rect rc = rit->second->GetRect();
-			rc.top += spacePerArea;
-			rit->second->SetRect(rc);
-			for (rit++; rit != this->chartAreas.rend(); rit++)
+			auto first = this->chartAreas.front();
+			Rect rc = first.second->GetRect();
+			rc.top = this->rcChart.top;
+			rc.left = this->rcChart.left;
+			rc.right = this->rcChart.right;
+			first.second->SetRect(rc);
+			for (auto a : this->chartAreas)
 			{
-				rc = rit->second->GetRect();
-				rc.bottom += spacePerArea;
-				rc.top += spacePerArea;
-				rit->second->SetRect(rc);
+				rc = a.second->GetRect();
+				rc.left = this->rcChart.left;
+				rc.right = this->rcChart.right;
+				a.second->SetRect(rc);
 			}
 		}
 	}
