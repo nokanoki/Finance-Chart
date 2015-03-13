@@ -1,6 +1,7 @@
 #pragma once
 #include "Platform.h"
 #include "api.h"
+//#include "ChartArea.h"
 #include <map>
 #include <vector>
 namespace fchart

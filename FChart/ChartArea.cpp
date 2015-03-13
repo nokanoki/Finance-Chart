@@ -13,25 +13,28 @@ pPlatform(pPlatform), pBrush(nullptr)
 	this->pPlatform->AddRef();
 	this->pBrush = this->pPlatform->CreateBrush(makesolidbrushprps(0xff0f0f0f));
 	this->transformation = maketransformation();
+	this->CreateAxis(L"default x", AxisType::Horizontal);
+	this->CreateAxis(L"default y", AxisType::Vertical);
+	
 }
 ChartArea::~ChartArea()
 {
 	for (auto axis : this->axies)
-		axis->Release();
+		axis.second->Release();
 	for (auto s : this->series)
-		s->Release();
+		s.second->Release();
 
 	this->pPlatform->Release();
 	this->pBrush->Release();
 }
-void ChartArea::SetRect(const Rect& rc)
+IChartArea* ChartArea::SetRect(const Rect& rc)
 {
 	this->rcArea = rc;
 	for (auto axis : this->axies)
-		axis->SetRect(rc);
+		axis.second->SetRect(rc);
 	for (auto s : this->series)
-		s->SetRect(rc);
-	
+		s.second->SetRect(rc);
+	return this;
 }
 void ChartArea::SetBackground(const int32_t& color, bool drawBg)
 {
@@ -43,9 +46,9 @@ void ChartArea::Draw()
 	this->pPlatform->DrawRect(this->rcArea, BrushStyle::Fill);
 
 	for (auto axis : this->axies)
-		axis->Draw();
+		axis.second->Draw();
 	for (auto s : this->series)
-		s->Draw();
+		s.second->Draw();
 	
 }
 
@@ -86,35 +89,29 @@ void ChartArea::OnMouseMove(const MouseEventArgs& e)
 
 	
 	for (auto axis : this->axies)
-		axis->SetTransformation(transformation);
+		axis.second->SetTransformation(transformation);
 	for (auto s : this->series)
-		s->SetTransformation(transformation);
+		s.second->SetTransformation(transformation);
 }
 
-IAxis* ChartArea::CreateAxis(const AxisType& type)
+IAxis* ChartArea::CreateAxis(const wchar_t* name,const AxisType& type)
 {
-	return new Axis(this->pPlatform, type);
+	auto axis = new Axis(this->pPlatform, type);
+	this->axies[name] = axis;
+	return axis;
 }
-void ChartArea::AddAxis(IAxis* pAxis)
+IAxis* ChartArea::GetAxis(const wchar_t* name)
 {
-	this->axies.push_back(dynamic_cast<Axis*>(pAxis));
-	pAxis->AddRef();
+	return this->axies[name];
 }
-ISeries* ChartArea::CreateSeries()
+ISeries* ChartArea::CreateSeries(const wchar_t* name)
 {
-	return new Series(this->pPlatform);
+	auto s = new Series(this->pPlatform);
+	s->SetRect(this->rcArea);
+	this->series[name] = s;
+	return s;
 }
-//rename that
-void ChartArea::SetSeries(ISeries *pSeries)
+ISeries* ChartArea::GetSeries(const wchar_t* name)
 {
-	this->series.push_back(dynamic_cast<Series*>(pSeries));
-	pSeries->AddRef();
-	for (auto a : this->axies)
-		a->SetData(dynamic_cast<Series*>(pSeries)->GetData());
-}
-void ChartArea::AddData(const Quotation* pData, const int32_t& count)
-{
-	std::copy(pData, pData + count, std::back_inserter(this->data));
-
-
+	return this->series[name];
 }

@@ -28,13 +28,15 @@ void Series::SetTransformation(const Transformation& trans)
 {
 	this->transformation = trans;
 }
-void Series::SetSeriesType(const SeriesType& type)
+ISeries* Series::SetSeriesType(const SeriesType& type)
 {
 	this->seriesType = type;
+	return this;
 }
-void Series::AddData(const Quotation *pData, const int32_t& count)
+ISeries* Series::AddData(const Quotation *pData, const int32_t& count)
 {
 	std::copy(pData, pData + count, std::back_inserter(this->data));
+	return this;
 }
 std::vector<Quotation> Series::GetData()
 {

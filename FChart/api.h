@@ -58,34 +58,33 @@ namespace fchart
 	enum class AxisType{ Horizontal, Vertical };
 	enum class AxisPosition { Left, Top, Right, Bottom, UserDefine };
 	enum class AxisDataType { Price, Time, Date };
+	
 	class IAxis
-		: public virtual IObject
 	{
 	public:
 		virtual ~IAxis() = default;
 		virtual void SetDataType(const AxisDataType& type) = 0;
 	};
+	enum class SeriesType{ Candlestick, Line, Band };
 	class ISeries
-		: public virtual IObject
 	{
 	public:
 		~ISeries() = default;
-		virtual void AddData(const Quotation*, const int32_t& count) = 0;
+		virtual ISeries* AddData(const Quotation*, const int32_t& count) = 0;
+		virtual ISeries* SetSeriesType(const SeriesType& type) = 0;
 	};
 
 
 	class IChartArea
-		: public virtual IObject
 	{
 	public:
 		virtual ~IChartArea() = default;
-		virtual IAxis* CreateAxis(const AxisType& type) = 0;
-		virtual void AddAxis(IAxis* pAxis) = 0;
-		virtual void SetRect(const Rect& rc) = 0;
-		virtual ISeries* CreateSeries() = 0;
-		//rename that
-		virtual void SetSeries(ISeries* series) = 0;
-		virtual void AddData(const Quotation*, const int32_t& count) = 0;
+		virtual IAxis* CreateAxis(const wchar_t* name, const AxisType& type) = 0;
+		virtual IAxis* GetAxis(const wchar_t* name) = 0;
+		virtual IChartArea* SetRect(const Rect& rc) = 0;
+		virtual ISeries* CreateSeries(const wchar_t* name) = 0;
+		virtual ISeries* GetSeries(const wchar_t* name) = 0;
+
 	};
 
 	class IChart
@@ -94,9 +93,8 @@ namespace fchart
 	public:
 		virtual ~IChart() = default;
 		virtual void SetSize(const int32_t& width, const int32_t& height) = 0;
-		virtual IChartArea* CreateChartArea() = 0;
-		virtual void AddChartArea(IChartArea* chartArea) = 0;
-		
+		virtual IChartArea* CreateChartArea(const wchar_t* name) = 0;
+		virtual IChartArea* GetChartArea(const wchar_t* name) = 0;
 		virtual void Render() = 0;
 
 	};

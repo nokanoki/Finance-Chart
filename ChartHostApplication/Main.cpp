@@ -59,21 +59,17 @@ fchart::Quotation q[] =
 void initchart()
 {
 	//TEST TEST TEST TEST TEST 
-	auto chartArea = chart->CreateChartArea();
-	auto axisX = chartArea->CreateAxis(fchart::AxisType::Horizontal);
-	auto axisY = chartArea->CreateAxis(fchart::AxisType::Vertical);
-	auto series = chartArea->CreateSeries();
-	series->AddData(q, _countof(q));
-	chartArea->AddAxis(axisX);
-	chartArea->AddAxis(axisY);
-	chartArea->SetSeries(series);
-	chart->AddChartArea(chartArea);
-	chartArea->SetRect(fchart::makerect(100.f, 600.f, 900.f, 100.f));
-	axisX->SetDataType(fchart::AxisDataType::Date);
-	chartArea->Release();
-	axisX->Release();
-	axisY->Release();
-	series->Release();
+	
+	chart
+		->GetChartArea(L"default")
+		->CreateSeries(L"price")
+		->AddData(q, _countof(q))
+		->SetSeriesType(fchart::SeriesType::Candlestick);
+	chart
+		->GetChartArea(L"default")
+		->GetAxis(L"default x")
+		->SetDataType(fchart::AxisDataType::Date);
+
 	
 }
 

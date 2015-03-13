@@ -8,11 +8,14 @@ Chart::Chart(IPlatform *platform)
 {
 	platform->AddRef();
 	platform->AddEventMouseMove(this);
+	this->CreateChartArea(L"default")->SetRect(makerect(100, 800, 900, 100));
+	this->pPlatform->AddEventMouseMove(this->chartAreas[L"default"]);
+
 }
 Chart::~Chart()
 {
 	for (auto chartArea : this->chartAreas)
-		chartArea->Release();
+		chartArea.second->Release();
 	pPlatform->Release();
 }
 void Chart::SetSize(const int32_t& width, const int32_t& height)
@@ -21,22 +24,22 @@ void Chart::SetSize(const int32_t& width, const int32_t& height)
 	this->Render();
 }
 
-IChartArea* Chart::CreateChartArea()
+IChartArea* Chart::CreateChartArea(const wchar_t* name)
 {
-	return new ChartArea(pPlatform);
+	auto area = new ChartArea(pPlatform);
+	this->chartAreas[name] = area;
+	return area;
 }
-void Chart::AddChartArea(IChartArea *pChartArea)
+IChartArea* Chart::GetChartArea(const wchar_t* name)
 {
-	this->chartAreas.push_back(dynamic_cast<ChartArea*> (pChartArea));
-	this->pPlatform->AddEventMouseMove(dynamic_cast<ChartArea*>(pChartArea));
-	pChartArea->AddRef();
+	return this->chartAreas[name];
 }
 
 void Chart::Render()
 {
 	this->pPlatform->Begin();
 	for (auto chartArea : this->chartAreas)
-		chartArea->Draw();
+		chartArea.second->Draw();
 	this->pPlatform->End();
 }
 

@@ -3,7 +3,7 @@
 #include "Platform.h"
 #include "Axis.h"
 #include "Series.h"
-
+#include <map>
 namespace fchart
 {
 	class ChartArea 
@@ -13,23 +13,22 @@ namespace fchart
 		ChartArea(IPlatform *pPlatform);
 		virtual ~ChartArea();
 		
-		virtual void SetRect(const Rect& rc);
+		virtual IChartArea* SetRect(const Rect& rc);
 		virtual void SetBackground(const int32_t& color, bool drawBg = true);
 		virtual void Draw();
 		virtual void OnMouseMove(const MouseEventArgs& args) override;
-		virtual IAxis* CreateAxis(const AxisType& type) override;
-		virtual void AddAxis(IAxis* pAxis) override;
-		virtual ISeries* CreateSeries() override;
-		//rename that
-		virtual void SetSeries(ISeries* series) override;
-		virtual void AddData(const Quotation*, const int32_t& count) override;
+		virtual IAxis* CreateAxis(const wchar_t* name,const AxisType& type) override;
+		virtual IAxis* GetAxis(const wchar_t* name) override;
+		virtual ISeries* CreateSeries(const wchar_t* name) override;
+		virtual ISeries* GetSeries(const wchar_t* name) override;
+
 
 	private:
 		IPlatform *pPlatform;
 		Rect rcArea;
 		IBrush *pBrush;
-		std::vector<Axis*> axies;
-		std::vector<Series*> series;
+		std::map<std::wstring,Axis*> axies;
+		std::map<std::wstring,Series*> series;
 		std::vector<Quotation> data;
 		IBrush *pBrushRed, *pBrushGreen;
 

@@ -6,7 +6,7 @@
 
 namespace fchart
 {
-	enum class SeriesType{ Candlestick, Line, Band };
+
 
 	class Series
 		: public ISeries, public virtual Object
@@ -16,8 +16,8 @@ namespace fchart
 		virtual ~Series();
 		virtual void SetRect(const Rect& rc);
 		virtual void SetTransformation(const Transformation& trans);
-		virtual void SetSeriesType(const SeriesType& type); 
-		virtual void AddData(const Quotation* pData, const int32_t& count);
+		virtual ISeries* SetSeriesType(const SeriesType& type) override;
+		virtual ISeries* AddData(const Quotation* pData, const int32_t& count) override;
 		virtual void Draw();
 
 		//test

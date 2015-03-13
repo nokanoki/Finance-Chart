@@ -3,6 +3,7 @@
 #include "Object.h"
 #include "Platform.h"
 #include "ChartArea.h"
+#include <map>
 namespace fchart
 {
 	class Chart :
@@ -16,16 +17,15 @@ namespace fchart
 
 		virtual void SetSize(const int32_t& width, const int32_t& height) override;
 
-		virtual IChartArea* CreateChartArea() override;
-		virtual void AddChartArea(IChartArea* chartArea) override;
-
+		virtual IChartArea* CreateChartArea(const wchar_t* name) override;
+		virtual IChartArea* GetChartArea(const wchar_t* name) override;
 		virtual void Render();
 
 		virtual void OnMouseMove(const MouseEventArgs& e) override;
 
 	private:
 		IPlatform *pPlatform;
-		std::vector<ChartArea*> chartAreas;
+		std::map<std::wstring,ChartArea*> chartAreas;
 
 	};
 }
