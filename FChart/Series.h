@@ -6,13 +6,13 @@
 
 namespace fchart
 {
-
-
+	class ChartArea;
+	enum class SeriesFocus { Auto, Manual };
 	class Series
 		: public ISeries, public virtual Object
 	{
 	public:
-		Series(IPlatform *pPlatform);
+		Series(IPlatform *pPlatform,ChartArea *charArea);
 		virtual ~Series();
 		virtual void SetRect(const Rect& rc);
 		virtual void SetTransformation(const Transformation& trans);
@@ -31,9 +31,10 @@ namespace fchart
 		IBrush *pBrushRed;
 		IBrush *pBrushGreen;
 		IBrush *pBrushWhite;
-		
+		ChartArea *pChartArea;
+		float dataPointWidth;
 		SeriesType seriesType;
-
+		SeriesFocus seriesFocus;
 		std::vector<Quotation> data;
 		Transformation transformation;
 	};

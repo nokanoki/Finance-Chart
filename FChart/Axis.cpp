@@ -9,7 +9,7 @@ Axis::Axis(IPlatform *pPlatform, const AxisType& type, ChartArea *pChartArea) :
 pPlatform(pPlatform), axisType(type), chartArea(pChartArea)
 {
 	pPlatform->AddRef();
-	this->pTextBrush = pPlatform->CreateBrush(makesolidbrushprps(0xafFFffFF));
+	this->pTextBrush = pPlatform->CreateBrush(makesolidbrushprps(0x8fFFffFF));
 	this->pTextFormat = pPlatform->CreateTextFormat(maketextprps());
 	this->transformation = maketransformation();
 	this->axisPosition = this->axisType == AxisType::Vertical ? AxisPosition::Right : AxisPosition::Bottom;
@@ -84,8 +84,12 @@ void Axis::DrawVertical()
 	this->pPlatform->SetBrush(this->pTextBrush, BrushStyle::Fill);
 	
 	for (float i = bottom; i < top; i += this->lblFactor)
-		pPlatform->DrawText(makepoint(left, i + this->lblFactor / 2.f), std::to_wstring((i - transformation.ty) / transformation.sy).c_str());
-
+	{
+		
+		float price = (i - transformation.ty) / transformation.sy;
+		price = static_cast<float>(static_cast<int>(price * 1000.f)) / 1000.f;
+		pPlatform->DrawText(makepoint(left, i + this->lblFactor / 2.f), std::to_wstring(price).c_str());
+	}
 	//draw grid
 	for (float i = bottom; i < top; i += this->gridFactor)
 	{

@@ -92,10 +92,6 @@ void ChartArea::OnMouseMove(const MouseEventArgs& e)
 		transformation.tx += mouse.x - mouse.xlast;
 		transformation.ty += mouse.y - mouse.ylast;
 	}
-
-	this->transformation.sy = 100.f;
-
-	
 	for (auto axis : this->axies)
 		axis.second->SetTransformation(transformation);
 	for (auto s : this->series)
@@ -114,7 +110,7 @@ IAxis* ChartArea::GetAxis(const wchar_t* name)
 }
 ISeries* ChartArea::CreateSeries(const wchar_t* name)
 {
-	auto s = new Series(this->pPlatform);
+	auto s = new Series(this->pPlatform,this);
 	s->SetRect(this->rcArea);
 	this->series[name] = s;
 	return s;
@@ -127,4 +123,12 @@ ISeries* ChartArea::GetSeries(const wchar_t* name)
 const Rect& ChartArea::GetRect()
 {
 	return this->rcArea;
+}
+void ChartArea::SetTransformation(const Transformation& trans)
+{
+	this->transformation = trans;
+	for (auto axis : this->axies)
+		axis.second->SetTransformation(transformation);
+	for (auto s : this->series)
+		s.second->SetTransformation(transformation);
 }

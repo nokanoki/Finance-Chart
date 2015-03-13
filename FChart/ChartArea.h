@@ -26,6 +26,7 @@ namespace fchart
 		virtual ISeries* GetSeries(const wchar_t* name) override;
 
 		const Rect& GetRect();
+		void SetTransformation(const Transformation& trans);
 
 
 	private:

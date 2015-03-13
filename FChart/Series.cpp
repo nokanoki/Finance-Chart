@@ -1,9 +1,12 @@
 #include "Series.h"
+#include "ChartArea.h"
+#include <algorithm>
 using namespace fchart;
 
 
-Series::Series(IPlatform *pPlatform) :
-pPlatform(pPlatform)
+
+Series::Series(IPlatform *pPlatform, ChartArea *pArea) :
+pPlatform(pPlatform), pChartArea(pArea)
 {
 	pPlatform->AddRef();
 	this->pBrushGreen = this->pPlatform->CreateBrush(makesolidbrushprps(0xff00ff00));
@@ -11,6 +14,8 @@ pPlatform(pPlatform)
 	this->pBrushWhite = this->pPlatform->CreateBrush(makesolidbrushprps(0xffFFffFF));
 	this->transformation = maketransformation();
 	this->seriesType = SeriesType::Line;
+	this->seriesFocus = SeriesFocus::Auto;
+	this->dataPointWidth = 10.f; //ref candlestick draw
 }
 Series::~Series()
 {
@@ -36,6 +41,35 @@ ISeries* Series::SetSeriesType(const SeriesType& type)
 ISeries* Series::AddData(const Quotation *pData, const int32_t& count)
 {
 	std::copy(pData, pData + count, std::back_inserter(this->data));
+	if (this->seriesFocus == SeriesFocus::Auto)
+	{
+		//calc transformation
+		Transformation tr = maketransformation();
+		float halfWidth = (this->rcSeries.right - this->rcSeries.left) / 2.f;
+
+		int32_t dataPointCount = static_cast<int32_t>(halfWidth / this->dataPointWidth);
+		if (dataPointCount <= this->data.size())
+		{
+			//tr.tx = dataPointCount - this->data.size();
+			float maxy = std::numeric_limits<float>::min();
+			float miny = std::numeric_limits<float>::max();
+			for (size_t i = this->data.size() - dataPointCount; i < this->data.size(); i++)
+			{
+				maxy = std::max(this->data[i].high, maxy);
+				miny = std::min(this->data[i].low, miny);
+			}
+			tr.sy = (this->rcSeries.top - this->rcSeries.bottom) / ((maxy - miny) * 2.f);
+		
+			tr.ty = -1.f * ((miny * tr.sy) / 2.f);
+			tr.tx = -((this->data.size() - dataPointCount) * this->dataPointWidth);
+			//normalize
+			tr.sy = static_cast<float>(static_cast<int>(tr.sy));
+			tr.ty = static_cast<float>(static_cast<int>(tr.ty));
+			
+
+		}
+		this->pChartArea->SetTransformation(tr);
+	}
 	return this;
 }
 std::vector<Quotation> Series::GetData()

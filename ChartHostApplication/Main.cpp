@@ -92,7 +92,7 @@ void initchart()
 		//->SetRect(fchart::makerect(100.f,300.f,800.f,50.f))
 		->CreateSeries(L"price")
 		->AddData(q, _countof(q))
-		->SetSeriesType(fchart::SeriesType::Line);
+		->SetSeriesType(fchart::SeriesType::Band);
 
 	chart
 		->GetChartArea(L"chartArea")
