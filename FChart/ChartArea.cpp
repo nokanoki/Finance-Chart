@@ -96,7 +96,7 @@ void ChartArea::OnMouseMove(const MouseEventArgs& e)
 
 IAxis* ChartArea::CreateAxis(const wchar_t* name,const AxisType& type)
 {
-	auto axis = new Axis(this->pPlatform, type);
+	auto axis = new Axis(this->pPlatform, type,this);
 	this->axies[name] = axis;
 	return axis;
 }

@@ -13,7 +13,7 @@ int fchart_factory(FCHART_FACTORY_STRUCT *pStruct)
 		pStruct->x, pStruct->y,
 		pStruct->width, pStruct->height);
 
-	*pStruct->ppOut = reinterpret_cast<void**>(new fchart::Chart(platform));
+	*pStruct->ppOut = reinterpret_cast<void**>(new fchart::Chart(platform,pStruct->width,pStruct->height));
 	platform->Release();
 	return 0;
 #else

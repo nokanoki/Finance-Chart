@@ -1,26 +1,25 @@
 #pragma once
 #include "Platform.h"
 #include "api.h"
-//#include "ChartArea.h"
+
 #include <map>
 #include <vector>
+
 namespace fchart
 {
-	
-	
+	class ChartArea;
 
 	class Axis
 		: public IAxis, public virtual Object
 	{
 	public:
-		Axis(IPlatform *pPlatform, const AxisType& type);
+		Axis(IPlatform *pPlatform, const AxisType& type, ChartArea* chartArea);
 		virtual ~Axis();
-
+		virtual IAxis* SetSourceSeries(const wchar_t* name) override;
 		virtual void SetRect(const Rect& rc);
 		virtual void SetTransformation(const Transformation& trans);
 		/*TEST*/
-		virtual void SetDataType(const AxisDataType& type);
-		virtual void SetData(const std::vector<Quotation>& data);
+		virtual IAxis* SetDataType(const AxisDataType& type);
 
 		virtual void Draw();
 		
@@ -38,12 +37,13 @@ namespace fchart
 		AxisPosition axisPosition;
 		Rect rcUserDefine;
 		AxisDataType axisDataType;
+		ChartArea *chartArea;
 		
 		float lblFactor;
 		float gridFactor;
 
 		/*TEST*/
 		float dataPointWidth;
-		std::vector<Quotation> data;
+		ISeries *sourceSeries;
 	};
 }

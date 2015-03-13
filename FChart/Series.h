@@ -20,6 +20,8 @@ namespace fchart
 		virtual ISeries* AddData(const Quotation* pData, const int32_t& count) override;
 		virtual void Draw();
 
+	
+
 		//test
 		std::vector<Quotation> GetData();
 

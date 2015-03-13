@@ -1,11 +1,12 @@
 #include "Axis.h"
+#include "ChartArea.h"
 #include <ctime>
 using namespace fchart;
 
 
 
-Axis::Axis(IPlatform *pPlatform, const AxisType& type) :
-pPlatform(pPlatform), axisType(type)
+Axis::Axis(IPlatform *pPlatform, const AxisType& type, ChartArea *pChartArea) :
+pPlatform(pPlatform), axisType(type), chartArea(pChartArea)
 {
 	pPlatform->AddRef();
 	this->pTextBrush = pPlatform->CreateBrush(makesolidbrushprps(0xafFFffFF));
@@ -29,6 +30,13 @@ void Axis::SetRect(const Rect& rc)
 {
 	this->rcAxis = rc;
 	
+}
+IAxis* Axis::SetSourceSeries(const wchar_t* name)
+{
+	if (this->sourceSeries)
+		;// this->sourceSeries;
+	this->sourceSeries = this->chartArea->GetSeries(name);
+	return this;
 }
 void Axis::SetTransformation(const Transformation& trans)
 {
@@ -111,6 +119,7 @@ void Axis::DrawHorizontal()
 	for (float i = left; i < width; i += this->lblFactor)
 	{
 		std::wstring lbl;
+		std::vector<Quotation> data = dynamic_cast<Series*>(this->sourceSeries)->GetData();
 		switch (this->axisDataType)
 		{
 		case AxisDataType::Price:
@@ -119,11 +128,11 @@ void Axis::DrawHorizontal()
 		case AxisDataType::Date:
 		{
 			size_t idx = static_cast<size_t>(((i - this->transformation.tx) /this->transformation.sx)  / this->dataPointWidth);
-			if (idx <= 0 || idx >= this->data.size())
+			if (idx <= 0 || idx >= data.size())
 				break;
 			wchar_t buf[256] = { 0 };
 			tm t;
-			gmtime_s(&t, &this->data[idx].time);
+			gmtime_s(&t, &data[idx].time);
 			std::wcsftime(buf, 256, L"%x", &t);
 			lbl = buf;
 		}
@@ -131,11 +140,11 @@ void Axis::DrawHorizontal()
 		case AxisDataType::Time:
 		{
 			size_t idx = static_cast<size_t>(((i - this->transformation.tx) / this->transformation.sx) / this->dataPointWidth);
-			if (idx <= 0 || idx >= this->data.size())
+			if (idx <= 0 || idx >= data.size())
 				break;
 			wchar_t buf[256] = { 0 };
 			tm t;
-			gmtime_s(&t, &this->data[idx].time);
+			gmtime_s(&t, &data[idx].time);
 			std::wcsftime(buf, 256, L"%X", &t);
 			lbl = buf;
 		}
@@ -147,11 +156,8 @@ void Axis::DrawHorizontal()
 	}
 }
 
-void Axis::SetDataType(const AxisDataType& type)
+IAxis* Axis::SetDataType(const AxisDataType& type)
 {
 	this->axisDataType = type;
-}
-void Axis::SetData(const std::vector<Quotation>& data)
-{
-	this->data = data;
+	return this;
 }

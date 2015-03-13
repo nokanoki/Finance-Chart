@@ -10,6 +10,9 @@ LRESULT CALLBACK proc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 int32_t(*factory)(FCHART_FACTORY_STRUCT*) = 0;
 
+void initchart();
+fchart::IChart *chart;
+
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShow)
 {
 
@@ -37,6 +40,17 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		CW_USEDEFAULT, 0,
 		CW_USEDEFAULT, 0,
 		NULL, NULL, hInstance, NULL);
+	RECT rc;
+	GetWindowRect(hWnd, &rc);
+	FCHART_FACTORY_STRUCT s;
+	s.hWnd = hWnd;
+	s.x = 0;
+	s.y = 0;
+	s.height = rc.bottom - rc.top;
+	s.width = rc.right - rc.left;
+	s.ppOut = reinterpret_cast<void**>(&chart);
+	factory(&s);
+	initchart();
 	
 
 	ShowWindow(hWnd, nShow);
@@ -50,7 +64,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	return 0;
 }
 
-fchart::IChart *chart;
+
 fchart::Quotation q[] = 
 {
 #include "testquotes.array"
@@ -62,32 +76,40 @@ void initchart()
 	
 	chart
 		->GetChartArea(L"default")
+		->SetRect(fchart::makerect(100.f,800.f,800.f,400.f))
 		->CreateSeries(L"price")
 		->AddData(q, _countof(q))
 		->SetSeriesType(fchart::SeriesType::Candlestick);
 	chart
 		->GetChartArea(L"default")
 		->GetAxis(L"default x")
-		->SetDataType(fchart::AxisDataType::Date);
+		->SetDataType(fchart::AxisDataType::Date)
+		->SetSourceSeries(L"price");
+	
+	chart
+		->CreateChartArea(L"chartArea")
+		->SetRect(fchart::makerect(100.f,300.f,800.f,50.f))
+		->CreateSeries(L"price")
+		->AddData(q, _countof(q))
+		->SetSeriesType(fchart::SeriesType::Line);
 
+	chart
+		->GetChartArea(L"chartArea")
+		->GetAxis(L"default x")
+		->SetDataType(fchart::AxisDataType::Date)
+		->SetSourceSeries(L"price");
+	
 	
 }
 
 LRESULT CALLBACK proc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	FCHART_FACTORY_STRUCT s;
+	
 	POINT p;
 	switch (msg)
 	{
 	case WM_CREATE:
-		s.hWnd = hWnd;
-		s.x = 0;
-		s.y = 0;
-		s.height = 100;
-		s.width = 100;
-		s.ppOut = reinterpret_cast<void**>(&chart);
-		factory(&s);
-		initchart();
+	
 		break;
 	case WM_SIZE:
 		p.x = GET_X_LPARAM(lParam);

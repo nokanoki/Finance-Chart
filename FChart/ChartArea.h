@@ -21,6 +21,7 @@ namespace fchart
 		virtual IAxis* GetAxis(const wchar_t* name) override;
 		virtual ISeries* CreateSeries(const wchar_t* name) override;
 		virtual ISeries* GetSeries(const wchar_t* name) override;
+		
 
 
 	private:

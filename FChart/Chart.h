@@ -12,7 +12,7 @@ namespace fchart
 		public Object
 	{
 	public:
-		Chart(IPlatform *pPlatform);
+		Chart(IPlatform *pPlatform, const int32_t& width, const int32_t& height);
 		virtual ~Chart() override;
 
 		virtual void SetSize(const int32_t& width, const int32_t& height) override;
@@ -24,6 +24,7 @@ namespace fchart
 		virtual void OnMouseMove(const MouseEventArgs& e) override;
 
 	private:
+		Rect rcChart;
 		IPlatform *pPlatform;
 		std::map<std::wstring,ChartArea*> chartAreas;
 
