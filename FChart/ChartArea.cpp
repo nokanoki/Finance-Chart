@@ -1,5 +1,5 @@
 #include "ChartArea.h"
-
+#include "Chart.h"
 using namespace fchart;
 
 
@@ -7,14 +7,15 @@ using namespace fchart;
 
 
 
-ChartArea::ChartArea(IPlatform *pPlatform) :
-pPlatform(pPlatform), pBrush(nullptr)
+ChartArea::ChartArea(IPlatform *pPlatform, Chart *pChart) :
+pPlatform(pPlatform),pChart(pChart) ,pBrush(nullptr)
 {
 	this->pPlatform->AddRef();
 	this->pBrush = this->pPlatform->CreateBrush(makesolidbrushprps(0xff0f0f0f));
 	this->transformation = maketransformation();
 	this->CreateAxis(L"default x", AxisType::Horizontal);
 	this->CreateAxis(L"default y", AxisType::Vertical);
+	this->isXAxisSync = false;
 	
 }
 ChartArea::~ChartArea()
@@ -96,6 +97,19 @@ void ChartArea::OnMouseMove(const MouseEventArgs& e)
 		axis.second->SetTransformation(transformation);
 	for (auto s : this->series)
 		s.second->SetTransformation(transformation);
+
+	if (this->isXAxisSync)
+	{
+		for (auto c : this->pChart->GetChartAreas())
+		{
+			if (c.second != this && c.second->IsXAxisSync())
+			{
+				auto tr = c.second->GetTransformation();
+				tr.tx = transformation.tx;
+				c.second->SetTransformation(tr);
+			}
+		}
+	}
 }
 
 IAxis* ChartArea::CreateAxis(const wchar_t* name,const AxisType& type)
@@ -131,4 +145,17 @@ void ChartArea::SetTransformation(const Transformation& trans)
 		axis.second->SetTransformation(transformation);
 	for (auto s : this->series)
 		s.second->SetTransformation(transformation);
+}
+const Transformation& ChartArea::GetTransformation()
+{
+	return this->transformation;
+}
+IChartArea* ChartArea::SetXAxisSync(const bool& onOff)
+{
+	this->isXAxisSync = onOff;
+	return this;
+}
+bool ChartArea::IsXAxisSync()
+{
+	return this->isXAxisSync;
 }

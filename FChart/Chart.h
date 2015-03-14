@@ -25,11 +25,24 @@ namespace fchart
 
 		virtual void OnMouseMove(const MouseEventArgs& e) override;
 
+
+		std::list<std::pair<std::wstring, ChartArea*>> GetChartAreas();
+
 	private:
 		Rect rcChart;
 		IPlatform *pPlatform;
 		ChartAreaPositionType chartAreaPositionType;
 		std::list<std::pair<std::wstring,ChartArea*>> chartAreas;
+
+		//test
+		Transformation transformation;
+		struct
+		{
+			bool isDragging;
+			float xstart, ystart;
+			float x, y;
+			float xlast, ylast;
+		}mouse;
 
 	};
 }

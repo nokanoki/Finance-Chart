@@ -85,6 +85,8 @@ namespace fchart
 		virtual IChartArea* SetRect(const Rect& rc) = 0;
 		virtual ISeries* CreateSeries(const wchar_t* name) = 0;
 		virtual ISeries* GetSeries(const wchar_t* name) = 0;
+		virtual IChartArea* SetXAxisSync(const bool& onOff) = 0;
+		virtual bool IsXAxisSync() = 0;
 
 	};
 	enum class ChartAreaPositionType{ Stack };

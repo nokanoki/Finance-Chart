@@ -96,6 +96,7 @@ void initchart()
 
 	chart
 		->GetChartArea(L"chartArea")
+		->SetXAxisSync(true)
 		->GetAxis(L"default x")
 		->SetDataType(fchart::AxisDataType::Date)
 		->SetSourceSeries(L"price");
@@ -107,6 +108,7 @@ void initchart()
 
 	chart
 		->GetChartArea(L"chartArea1")
+		->SetXAxisSync(true)
 		->GetAxis(L"default x")
 		->SetSourceSeries(L"price")
 		->SetDataType(fchart::AxisDataType::Date);

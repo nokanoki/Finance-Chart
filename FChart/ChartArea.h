@@ -9,11 +9,12 @@ namespace fchart
 {
 
 
+	class Chart;
 	class ChartArea 
 		: public IChartArea, public virtual Object, public IMouseMoveListener
 	{
 	public:
-		ChartArea(IPlatform *pPlatform);
+		ChartArea(IPlatform *pPlatform, Chart *pChart);
 		virtual ~ChartArea();
 		
 		virtual IChartArea* SetRect(const Rect& rc);
@@ -24,9 +25,13 @@ namespace fchart
 		virtual IAxis* GetAxis(const wchar_t* name) override;
 		virtual ISeries* CreateSeries(const wchar_t* name) override;
 		virtual ISeries* GetSeries(const wchar_t* name) override;
+		virtual IChartArea* SetXAxisSync(const bool& onOff) override;
+		virtual bool IsXAxisSync() override;
 
 		const Rect& GetRect();
 		void SetTransformation(const Transformation& trans);
+		const Transformation& GetTransformation();
+	
 
 
 	private:
@@ -37,8 +42,10 @@ namespace fchart
 		std::map<std::wstring,Series*> series;
 		std::vector<Quotation> data;
 		IBrush *pBrushRed, *pBrushGreen;
+		Chart* pChart;
 
 		/*Test*/
+		bool isXAxisSync;
 		Transformation transformation;
 		struct
 		{

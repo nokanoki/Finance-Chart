@@ -10,6 +10,7 @@ Chart::Chart(IPlatform *platform, const int32_t& width, const int32_t& height)
 	platform->AddRef();
 	platform->AddEventMouseMove(this);
 	this->CreateChartArea(L"default");
+	this->transformation = maketransformation();
 
 }
 Chart::~Chart()
@@ -48,7 +49,7 @@ void Chart::SetSize(const int32_t& width, const int32_t& height)
 
 IChartArea* Chart::CreateChartArea(const wchar_t* name)
 {
-	auto area = new ChartArea(pPlatform);
+	auto area = new ChartArea(pPlatform, this);
 	this->pPlatform->AddEventMouseMove(area);
 	area->SetRect(this->rcChart);
 	if (this->chartAreaPositionType == ChartAreaPositionType::Stack)
@@ -102,7 +103,51 @@ void Chart::Render()
 
 void Chart::OnMouseMove(const MouseEventArgs& e)
 {
+
+	/*
+	if (e.x < this->rcChart.left
+		|| e.x > this->rcChart.right
+		|| e.y > this->rcChart.top
+		|| e.y < this->rcChart.bottom)
+		return;
+	if (e.buttonState.left)
+	{
+		if (!mouse.isDragging)
+		{
+			mouse.isDragging = true;
+			mouse.x = mouse.xstart = mouse.xlast = e.x;
+			mouse.y = mouse.ystart = mouse.ylast = e.y;
+		}
+		else
+		{
+			mouse.xlast = mouse.x;
+			mouse.ylast = mouse.y;
+			mouse.x = e.x;
+			mouse.y = e.y;
+		}
+	}
+	else
+		mouse.isDragging = false;
+
+	if (mouse.isDragging)
+	{
+		transformation.tx += mouse.x - mouse.xlast;
+		transformation.ty += mouse.y - mouse.ylast;
+
+		for (auto a : this->chartAreas)
+		{
+			auto t = a.second->GetTransformation();
+			t.tx += mouse.x - mouse.xlast;
+			a.second->SetTransformation(t);
+		}
+	}
+	*/
 	this->Render();
+}
+
+std::list<std::pair<std::wstring, ChartArea*>> Chart::GetChartAreas()
+{
+	return this->chartAreas;
 }
 IChart* Chart::SetAreaChartPositionType(const ChartAreaPositionType& type)
 {
