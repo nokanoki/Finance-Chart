@@ -17,6 +17,7 @@ namespace fchart
 		virtual ~Axis();
 		virtual IAxis* SetSourceSeries(const wchar_t* name) override;
 		virtual void SetRect(const Rect& rc);
+		const Rect& GetLabelRect();
 		virtual void SetTransformation(const Transformation& trans);
 		/*TEST*/
 		virtual IAxis* SetDataType(const AxisDataType& type);
@@ -33,6 +34,7 @@ namespace fchart
 	private:
 		IPlatform *pPlatform;
 		Rect rcAxis;
+		Rect rcLabel;
 		ITextFormat *pTextFormat;
 		IBrush *pTextBrush;
 		Transformation transformation;

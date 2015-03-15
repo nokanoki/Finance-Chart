@@ -73,26 +73,27 @@ fchart::Quotation q[] =
 void initchart()
 {
 	//TEST TEST TEST TEST TEST 
-	
+#if 1
 	chart
 		->SetAreaChartPositionType(fchart::ChartAreaPositionType::Stack)
 		->GetChartArea(L"default")
 		//->SetRect(fchart::makerect(100.f,800.f,800.f,400.f))
 		->CreateSeries(L"price")
-		->AddData(q, _countof(q))
-		->SetSeriesType(fchart::SeriesType::Candlestick);
+		->SetSeriesType(fchart::SeriesType::Candlestick)
+		->AddData(q, _countof(q));
 	chart
 		->GetChartArea(L"default")
 		->GetAxis(L"default x")
 		->SetDataType(fchart::AxisDataType::Date)
 		->SetSourceSeries(L"price");
-	
+#endif
+#if 0
 	chart
 		->CreateChartArea(L"chartArea")
 		//->SetRect(fchart::makerect(100.f,300.f,800.f,50.f))
 		->CreateSeries(L"price")
-		->AddData(q, _countof(q))
-		->SetSeriesType(fchart::SeriesType::Band);
+		->SetSeriesType(fchart::SeriesType::Bar)
+		->AddData(q, _countof(q));
 
 	chart
 		->GetChartArea(L"chartArea")
@@ -100,7 +101,8 @@ void initchart()
 		->GetAxis(L"default x")
 		->SetDataType(fchart::AxisDataType::Date)
 		->SetSourceSeries(L"price");
-
+#endif
+#if 0
 	chart
 		->CreateChartArea(L"chartArea1")
 		->CreateSeries(L"price")
@@ -112,6 +114,7 @@ void initchart()
 		->GetAxis(L"default x")
 		->SetSourceSeries(L"price")
 		->SetDataType(fchart::AxisDataType::Date);
+#endif
 	
 	
 }

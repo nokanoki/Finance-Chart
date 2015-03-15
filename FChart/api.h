@@ -66,7 +66,7 @@ namespace fchart
 		virtual IAxis* SetDataType(const AxisDataType& type) = 0;
 		virtual IAxis* SetSourceSeries(const wchar_t* name) = 0;
 	};
-	enum class SeriesType{ Candlestick, Line, Band };
+	enum class SeriesType{ Candlestick, Line, Band, Bar };
 	class ISeries
 	{
 	public:

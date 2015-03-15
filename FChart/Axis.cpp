@@ -30,7 +30,25 @@ Axis::~Axis()
 void Axis::SetRect(const Rect& rc)
 {
 	this->rcAxis = rc;
-	
+	this->rcLabel = rc;
+	if (this->axisType == AxisType::Horizontal)
+	{
+		if (this->axisPosition == AxisPosition::Bottom)
+			rcLabel.top = rcLabel.bottom + this->axisSize;
+		else if (this->axisPosition == AxisPosition::Top)
+			rcLabel.bottom = rcLabel.top - this->axisSize;
+	}
+	else if (this->axisType == AxisType::Vertical)
+	{
+		if (this->axisPosition == AxisPosition::Right)
+			rcLabel.left = rcLabel.right - this->axisSize;
+		else if (this->axisPosition == AxisPosition::Left)
+			rcLabel.right = rcLabel.left + this->axisSize;
+	}
+}
+const Rect& Axis::GetLabelRect()
+{
+	return this->rcLabel;
 }
 IAxis* Axis::SetSourceSeries(const wchar_t* name)
 {

@@ -37,6 +37,7 @@ namespace fchart
 	private:
 		IPlatform *pPlatform;
 		Rect rcArea;
+		Rect rcSeries;
 		IBrush *pBrush;
 		std::map<std::wstring,Axis*> axies;
 		std::map<std::wstring,Series*> series;

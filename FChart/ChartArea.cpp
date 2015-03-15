@@ -31,7 +31,7 @@ ChartArea::~ChartArea()
 IChartArea* ChartArea::SetRect(const Rect& rc)
 {
 	this->rcArea = rc;
-	Rect rcSeries = rc;
+	this->rcSeries = rc;
 	for (auto axis : this->axies)
 	{
 		if (axis.second->GetAxisType() == AxisType::Vertical)
@@ -65,11 +65,13 @@ void ChartArea::Draw()
 void ChartArea::OnMouseMove(const MouseEventArgs& e)
 {
 	//is in area?
+	
 	if (e.x < this->rcArea.left
 		|| e.x > this->rcArea.right
 		|| e.y > this->rcArea.top
 		|| e.y < this->rcArea.bottom)
-		return;
+		return;//nope skip it
+	//calc dragging
 	if (e.buttonState.left)
 	{
 		if (!mouse.isDragging)
@@ -88,10 +90,43 @@ void ChartArea::OnMouseMove(const MouseEventArgs& e)
 	}
 	else
 		mouse.isDragging = false;
+
 	if (mouse.isDragging)
 	{
-		transformation.tx += mouse.x - mouse.xlast;
-		transformation.ty += mouse.y - mouse.ylast;
+		//is in series
+		if (!this->series.empty())
+		{
+			if (!(e.x  < this->rcSeries.left
+				|| e.x > this->rcSeries.right
+				|| e.y > this->rcSeries.top
+				|| e.y < this->rcSeries.bottom))
+			{
+				this->transformation.tx -= mouse.xlast - mouse.x;
+				this->transformation.ty -= mouse.ylast - mouse.y;
+			}
+			else//check axies
+			{
+#if 0
+				for (auto a : this->axies)
+				{
+					if (( e.x > a.second->GetLabelRect().left
+						&& e.x < a.second->GetLabelRect().right
+						&& e.y < a.second->GetLabelRect().top
+						&& e.y > a.second->GetLabelRect().bottom))
+					{
+						if (a.second->GetAxisType() == AxisType::Vertical)
+						{
+							if ((mouse.xlast - mouse.x) != 0.f)
+								transformation.sy += (mouse.ylast - mouse.y) / 1.f;
+						}
+						else
+							if ((mouse.xlast - mouse.x) != 0.f)
+								transformation.sx += (mouse.xlast - mouse.x) / 1.f;
+					}
+				}
+#endif
+			}
+		}
 	}
 	for (auto axis : this->axies)
 		axis.second->SetTransformation(transformation);
@@ -106,6 +141,7 @@ void ChartArea::OnMouseMove(const MouseEventArgs& e)
 			{
 				auto tr = c.second->GetTransformation();
 				tr.tx = transformation.tx;
+				tr.ty = transformation.ty;
 				c.second->SetTransformation(tr);
 			}
 		}

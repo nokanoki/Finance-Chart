@@ -15,6 +15,7 @@ namespace fchart
 		Series(IPlatform *pPlatform,ChartArea *charArea);
 		virtual ~Series();
 		virtual void SetRect(const Rect& rc);
+		const Rect& GetRect();
 		virtual void SetTransformation(const Transformation& trans);
 		virtual ISeries* SetSeriesType(const SeriesType& type) override;
 		virtual ISeries* AddData(const Quotation* pData, const int32_t& count) override;
