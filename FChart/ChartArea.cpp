@@ -21,10 +21,10 @@ pPlatform(pPlatform),pChart(pChart) ,pBrush(nullptr)
 ChartArea::~ChartArea()
 {
 	for (auto axis : this->axies)
-		axis.second->Release();
+		delete axis.second;
 	
 	for (auto s : this->series)
-		s.second->Release();
+		delete s.second;
 		
 
 	this->pPlatform->Release();
@@ -213,7 +213,7 @@ IChartArea* ChartArea::FocusLast(const wchar_t* seriesName)
 	};
 
 	//calc last datapoints
-	size_t maxDataPoints = (this->rcSeries.right - this->rcSeries.left) / 10.f;
+	size_t maxDataPoints = static_cast<size_t>((this->rcSeries.right - this->rcSeries.left) / 10.f);
 	maxDataPoints /= 2;
 	auto first = d.begin();
 	if (maxDataPoints < d.size())

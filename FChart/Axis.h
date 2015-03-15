@@ -10,24 +10,28 @@ namespace fchart
 	class ChartArea;
 
 	class Axis
-		: public IAxis, public virtual Object
+		: public IAxis
 	{
 	public:
+		Axis() = delete;
+		Axis(const Axis&) = delete;
+
 		Axis(IPlatform *pPlatform, const AxisType& type, ChartArea* chartArea);
-		virtual ~Axis();
+		~Axis();
 
-		virtual void SetRect(const Rect& rc);
+		void SetRect(const Rect& rc);
 		const Rect& GetLabelRect();
-		virtual void SetTransformation(const Transformation& trans);
-		virtual IAxis* SetDataType(const AxisDataType& type);
-		virtual const AxisType& GetAxisType();
-		virtual float GetAxisSize();
-		
-
+		void SetTransformation(const Transformation& trans);
+		float GetAxisSize();
 		virtual void Draw(const std::vector<Quotation>& data);
-
-		virtual IAxis* SetBufferSource(const wchar_t* name) override; 
 		std::wstring GetBufferSource();
+		const AxisType& GetAxisType();
+
+		//////////////  interface imp
+	public:
+		virtual IAxis* SetDataType(const AxisDataType& type);
+		virtual IAxis* SetBufferSource(const wchar_t* name) override; 
+		
 		
 	private:
 		void DrawVertical(const std::vector<Quotation>& data);
@@ -45,12 +49,9 @@ namespace fchart
 		Rect rcUserDefine;
 		AxisDataType axisDataType;
 		ChartArea *chartArea;
-		
 		float lblFactor;
 		float gridFactor;
 		float axisSize;
-
-		/*TEST*/
 		float dataPointWidth;
 		ISeries *sourceSeries;
 		std::wstring bufferName;

@@ -62,7 +62,6 @@ namespace fchart
 	class IAxis
 	{
 	public:
-		virtual ~IAxis() = default;
 		virtual IAxis* SetDataType(const AxisDataType& type) = 0;
 		virtual IAxis* SetBufferSource(const wchar_t* name) = 0;
 	};
@@ -70,7 +69,6 @@ namespace fchart
 	class ISeries
 	{
 	public:
-		~ISeries() = default;
 		virtual ISeries* SetSeriesType(const SeriesType& type) = 0;
 		virtual ISeries* SetBufferSource(const wchar_t* bufferName) = 0;
 		
@@ -79,7 +77,6 @@ namespace fchart
 	class IChartArea
 	{
 	public:
-		virtual ~IChartArea() = default;
 		virtual IAxis* CreateAxis(const wchar_t* name, const AxisType& type) = 0;
 		virtual IAxis* GetAxis(const wchar_t* name) = 0;
 		virtual IChartArea* SetRect(const Rect& rc) = 0;

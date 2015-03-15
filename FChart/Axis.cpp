@@ -46,6 +46,8 @@ void Axis::SetRect(const Rect& rc)
 			rcLabel.right = rcLabel.left + this->axisSize;
 	}
 }
+
+
 const Rect& Axis::GetLabelRect()
 {
 	return this->rcLabel;

@@ -16,7 +16,7 @@ Chart::Chart(IPlatform *platform, const int32_t& width, const int32_t& height)
 Chart::~Chart()
 {
 	for (auto chartArea : this->chartAreas)
-		chartArea.second->Release();
+		delete chartArea.second;
 	pPlatform->Release();
 }
 void Chart::SetSize(const int32_t& width, const int32_t& height)

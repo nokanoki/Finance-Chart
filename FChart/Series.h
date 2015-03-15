@@ -8,21 +8,25 @@ namespace fchart
 {
 	class ChartArea;
 	class Series
-		: public ISeries, public virtual Object
+		: public ISeries
 	{
 	public:
-		Series(IPlatform *pPlatform,ChartArea *charArea);
-		virtual ~Series();
-		virtual void SetRect(const Rect& rc);
-		const Rect& GetRect();
-		virtual void SetTransformation(const Transformation& trans);
-		virtual ISeries* SetSeriesType(const SeriesType& type) override;
-	
+		Series() = delete;
+		Series(const Series&) = delete;
 
-		virtual ISeries* SetBufferSource(const wchar_t* bufferName);
+		Series(IPlatform *pPlatform,ChartArea *charArea);
+		~Series();
+
+		void SetRect(const Rect& rc);
+		const Rect& GetRect();
+		void SetTransformation(const Transformation& trans);
 		void Draw(const std::vector<Quotation>& buffer);
 		std::wstring GetBufferSourceName();
 
+		////////////// interface imp
+	public:
+		virtual ISeries* SetSeriesType(const SeriesType& type) override;
+		virtual ISeries* SetBufferSource(const wchar_t* bufferName);
 
 	private:
 		IPlatform *pPlatform;
