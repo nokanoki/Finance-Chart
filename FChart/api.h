@@ -71,7 +71,6 @@ namespace fchart
 	{
 	public:
 		~ISeries() = default;
-		//virtual ISeries* AddData(const Quotation*, const int32_t& count) = 0;
 		virtual ISeries* SetSeriesType(const SeriesType& type) = 0;
 		virtual ISeries* SetBufferSource(const wchar_t* bufferName) = 0;
 		
@@ -87,8 +86,6 @@ namespace fchart
 		virtual ISeries* CreateSeries(const wchar_t* name) = 0;
 		virtual ISeries* GetSeries(const wchar_t* name) = 0;
 		virtual IChartArea* SetXAxisSync(const bool& onOff) = 0;
-		virtual IChartArea* CreateDataBuffer(const wchar_t* name) = 0;
-		virtual IChartArea* SetData(const wchar_t* bufferName,const Quotation* pData, const int32_t& count, const SetDataType& type) = 0;
 		virtual bool IsXAxisSync() = 0;
 		virtual IChartArea* FocusLast(const wchar_t* seriesName) = 0;
 
@@ -105,6 +102,10 @@ namespace fchart
 		virtual IChartArea* GetChartArea(const wchar_t* name) = 0;
 		virtual IChart* SetAreaChartPositionType(const ChartAreaPositionType& type) = 0;
 		virtual void Render() = 0;
+
+		virtual IChart* CreateDataBuffer(const wchar_t* name) = 0;
+		virtual IChart* SetData(const wchar_t* bufferName, const Quotation* pData, const int32_t& count, const SetDataType& type) = 0;
+
 
 	};
 }

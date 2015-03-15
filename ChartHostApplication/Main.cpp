@@ -78,18 +78,14 @@ void initchart()
 #if 1
 	chart
 		->SetAreaChartPositionType(fchart::ChartAreaPositionType::Stack)
-		->GetChartArea(L"default")
 		->CreateDataBuffer(L"buffer")
 		->SetData(L"buffer", q, _countof(q), fchart::SetDataType::Append)
-
+		
+		->GetChartArea(L"default")
 		->CreateSeries(L"price")
 		->SetBufferSource(L"buffer")
 		->SetSeriesType(fchart::SeriesType::Candlestick);
-	chart
-		->GetChartArea(L"default")
-		->GetAxis(L"default x")
-		->SetDataType(fchart::AxisDataType::Date)
-		->SetSourceSeries(L"price");
+
 
 	chart
 		->GetChartArea(L"default")
@@ -100,10 +96,10 @@ void initchart()
 #if 0
 	chart
 		->CreateChartArea(L"chartArea")
-		//->SetRect(fchart::makerect(100.f,300.f,800.f,50.f))
 		->CreateSeries(L"price")
 		->SetSeriesType(fchart::SeriesType::Bar)
-		->AddData(q, _countof(q));
+
+		;
 
 	chart
 		->GetChartArea(L"chartArea")

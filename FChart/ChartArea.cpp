@@ -13,8 +13,7 @@ pPlatform(pPlatform),pChart(pChart) ,pBrush(nullptr)
 	this->pPlatform->AddRef();
 	this->pBrush = this->pPlatform->CreateBrush(makesolidbrushprps(0xff0f0f0f));
 	this->transformation = maketransformation();
-	this->CreateAxis(L"default x", AxisType::Horizontal);
-	this->CreateAxis(L"default y", AxisType::Vertical);
+
 	this->isXAxisSync = false;
 	
 
@@ -52,16 +51,17 @@ void ChartArea::SetBackground(const int32_t& color, bool drawBg)
 {
 	
 }
-void ChartArea::Draw()
+void ChartArea::Draw(const std::map <std::wstring, std::vector<Quotation>>& buffers)
 {
 	this->pPlatform->SetBrush(this->pBrush, BrushStyle::Fill);
 	this->pPlatform->DrawRect(this->rcArea, BrushStyle::Fill);
 
 	for (auto axis : this->axies)
-		axis.second->Draw(this->data[L"buffer"]);
+		axis.second->Draw(buffers.find(L"buffer")->second);
+	
 
 	for (auto s : this->series)
-		s.second->Draw(this->data[s.second->GetBufferSourceName()]);
+		s.second->Draw(buffers.find(s.second->GetBufferSourceName())->second);
 }
 
 
@@ -164,8 +164,8 @@ IAxis* ChartArea::GetAxis(const wchar_t* name)
 ISeries* ChartArea::CreateSeries(const wchar_t* name)
 {
 	auto s = new Series(this->pPlatform,this);
-	s->SetRect(this->rcArea);
 	this->series[name] = s;
+	SetRect(this->rcArea);
 	return s;
 }
 ISeries* ChartArea::GetSeries(const wchar_t* name)
@@ -199,23 +199,12 @@ bool ChartArea::IsXAxisSync()
 	return this->isXAxisSync;
 }
 
-IChartArea* ChartArea::CreateDataBuffer(const wchar_t* name)
-{
-	this->data[name];
-	return this;
-}
-IChartArea* ChartArea::SetData(const wchar_t* bufferName, const Quotation* pData, const int32_t& count, const SetDataType& type)
-{
-	if (type == SetDataType::Append)
-		std::copy(pData, pData + count, std::back_inserter(this->data[bufferName]));
 
-	return this;
-}
 IChartArea* ChartArea::FocusLast(const wchar_t* seriesName)
 {
 	auto s = this->series[seriesName];
 	
-	auto d = this->data[s->GetBufferSourceName()];
+	auto d = this->pChart->GetData(s->GetBufferSourceName());
 	
 	auto l = [](const Quotation& q0,const Quotation& q1)
 	{

@@ -19,16 +19,14 @@ namespace fchart
 		
 		virtual IChartArea* SetRect(const Rect& rc);
 		virtual void SetBackground(const int32_t& color, bool drawBg = true);
-		virtual void Draw();
+		virtual void Draw(const std::map <std::wstring, std::vector<Quotation>>& buffers);
 		virtual void OnMouseMove(const MouseEventArgs& args) override;
 		virtual IAxis* CreateAxis(const wchar_t* name,const AxisType& type) override;
 		virtual IAxis* GetAxis(const wchar_t* name) override;
 		virtual ISeries* CreateSeries(const wchar_t* name) override;
 		virtual ISeries* GetSeries(const wchar_t* name) override;
 		virtual IChartArea* SetXAxisSync(const bool& onOff) override;
-		virtual IChartArea* CreateDataBuffer(const wchar_t* name) override;
-		virtual IChartArea* SetData(const wchar_t* bufferName, const Quotation* pData, const int32_t& count, const SetDataType& type) override;
-		
+	
 		virtual IChartArea* FocusLast(const wchar_t* seriesName) override;
 
 		virtual bool IsXAxisSync() override;
