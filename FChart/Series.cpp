@@ -42,6 +42,7 @@ ISeries* Series::SetSeriesType(const SeriesType& type)
 	this->seriesType = type;
 	return this;
 }
+#if 0
 ISeries* Series::AddData(const Quotation *pData, const int32_t& count)
 {
 	std::copy(pData, pData + count, std::back_inserter(this->data));
@@ -92,12 +93,13 @@ std::vector<Quotation> Series::GetData()
 {
 	return this->data;
 }
-void Series::Draw()
+#endif
+void Series::Draw(const std::vector<Quotation>& data)
 {
 	int i = 0;
 	if (this->seriesType == SeriesType::Candlestick)
 	{
-		for (auto q : this->data)
+		for (auto q : data)
 		{
 
 			float y[] = {
@@ -149,7 +151,7 @@ void Series::Draw()
 		bool isFirstSet = false;
 		float xlast , ylast;
 		float i = 0;
-		for (auto q : this->data)
+		for (auto q : data)
 		{
 			if (!isFirstSet)
 			{
@@ -190,7 +192,7 @@ void Series::Draw()
 		bool isFirstSet = false;
 		float xlast, ylast0, ylast1;
 		float i = 0;
-		for (auto q : this->data)
+		for (auto q : data)
 		{
 			if (!isFirstSet)
 			{
@@ -235,7 +237,7 @@ void Series::Draw()
 	//Not working ref AddData
 	else if (this->seriesType == SeriesType::Bar)
 	{
-		for (auto q : this->data)
+		for (auto q :data)
 		{
 
 			
@@ -255,4 +257,16 @@ void Series::Draw()
 			this->pPlatform->DrawRect(rc, BrushStyle::Fill);
 		}
 	}
+}
+
+
+
+ISeries* Series::SetBufferSource(const wchar_t* name)
+{
+	this->bufferName = name;
+	return this;
+}
+std::wstring Series::GetBufferSourceName()
+{
+	return this->bufferName;
 }

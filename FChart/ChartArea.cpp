@@ -1,7 +1,7 @@
 #include "ChartArea.h"
 #include "Chart.h"
+#include <algorithm>
 using namespace fchart;
-
 
 
 
@@ -17,13 +17,16 @@ pPlatform(pPlatform),pChart(pChart) ,pBrush(nullptr)
 	this->CreateAxis(L"default y", AxisType::Vertical);
 	this->isXAxisSync = false;
 	
+
 }
 ChartArea::~ChartArea()
 {
 	for (auto axis : this->axies)
 		axis.second->Release();
+	
 	for (auto s : this->series)
 		s.second->Release();
+		
 
 	this->pPlatform->Release();
 	this->pBrush->Release();
@@ -55,10 +58,10 @@ void ChartArea::Draw()
 	this->pPlatform->DrawRect(this->rcArea, BrushStyle::Fill);
 
 	for (auto axis : this->axies)
-		axis.second->Draw();
+		axis.second->Draw(this->data[L"buffer"]);
+
 	for (auto s : this->series)
-		s.second->Draw();
-	
+		s.second->Draw(this->data[s.second->GetBufferSourceName()]);
 }
 
 
@@ -194,4 +197,43 @@ IChartArea* ChartArea::SetXAxisSync(const bool& onOff)
 bool ChartArea::IsXAxisSync()
 {
 	return this->isXAxisSync;
+}
+
+IChartArea* ChartArea::CreateDataBuffer(const wchar_t* name)
+{
+	this->data[name];
+	return this;
+}
+IChartArea* ChartArea::SetData(const wchar_t* bufferName, const Quotation* pData, const int32_t& count, const SetDataType& type)
+{
+	if (type == SetDataType::Append)
+		std::copy(pData, pData + count, std::back_inserter(this->data[bufferName]));
+
+	return this;
+}
+IChartArea* ChartArea::FocusLast(const wchar_t* seriesName)
+{
+	auto s = this->series[seriesName];
+	
+	auto d = this->data[s->GetBufferSourceName()];
+	
+	auto l = [](const Quotation& q0,const Quotation& q1)
+	{
+		return q0.high < q1.high;
+	};
+
+	//calc last datapoints
+	size_t maxDataPoints = (this->rcSeries.right - this->rcSeries.left) / 10.f;
+	maxDataPoints /= 2;
+	auto first = d.begin();
+	if (maxDataPoints < d.size())
+		first = d.end() - maxDataPoints;
+
+	auto minmax = std::minmax_element(first, d.end(), l);
+	
+	this->transformation.sy = (this->rcSeries.top - this->rcSeries.bottom) / (minmax.second->high - minmax.first->low);
+	this->transformation.tx = -(std::distance(d.begin(), first) * 10.f);
+	this->transformation.ty = -(this->transformation.sy * minmax.first->high);
+	this->pChart->Render();
+	return this;
 }

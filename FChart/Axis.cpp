@@ -64,16 +64,16 @@ void Axis::SetTransformation(const Transformation& trans)
 
 
 
-void Axis::Draw()
+void Axis::Draw(const std::vector<Quotation>& data)
 {
 	//todo merge that
 	if (this->axisType == AxisType::Vertical)
-		this->DrawVertical();
+		this->DrawVertical(data);
 	else
-		this->DrawHorizontal();
+		this->DrawHorizontal(data);
 	
 }
-void Axis::DrawVertical()
+void Axis::DrawVertical(const std::vector<Quotation>& data)
 {
 	float top, bottom, left, right;
 	switch (this->axisPosition)
@@ -114,7 +114,7 @@ void Axis::DrawVertical()
 		pPlatform->DrawLine(makepoint(this->rcAxis.left, i), makepoint(this->rcAxis.right, i), StrokeStyle::Solid);
 	}
 }
-void Axis::DrawHorizontal()
+void Axis::DrawHorizontal(const std::vector<Quotation>& data)
 {
 	float top, bottom, left, right;
 	switch (this->axisPosition)
@@ -142,7 +142,7 @@ void Axis::DrawHorizontal()
 	for (float i = left; i < width; i += this->lblFactor)
 	{
 		std::wstring lbl;
-		std::vector<Quotation> data = dynamic_cast<Series*>(this->sourceSeries)->GetData();
+		
 		switch (this->axisDataType)
 		{
 		case AxisDataType::Price:

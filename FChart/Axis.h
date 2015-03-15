@@ -25,11 +25,11 @@ namespace fchart
 		virtual float GetAxisSize();
 		
 
-		virtual void Draw();
+		virtual void Draw(const std::vector<Quotation>& data);
 		
 	private:
-		void DrawVertical();
-		void DrawHorizontal();
+		void DrawVertical(const std::vector<Quotation>& data);
+		void DrawHorizontal(const std::vector<Quotation>& data);
 
 	private:
 		IPlatform *pPlatform;

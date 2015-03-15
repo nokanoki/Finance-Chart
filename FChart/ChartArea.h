@@ -26,12 +26,17 @@ namespace fchart
 		virtual ISeries* CreateSeries(const wchar_t* name) override;
 		virtual ISeries* GetSeries(const wchar_t* name) override;
 		virtual IChartArea* SetXAxisSync(const bool& onOff) override;
+		virtual IChartArea* CreateDataBuffer(const wchar_t* name) override;
+		virtual IChartArea* SetData(const wchar_t* bufferName, const Quotation* pData, const int32_t& count, const SetDataType& type) override;
+		
+		virtual IChartArea* FocusLast(const wchar_t* seriesName) override;
+
 		virtual bool IsXAxisSync() override;
 
 		const Rect& GetRect();
 		void SetTransformation(const Transformation& trans);
 		const Transformation& GetTransformation();
-	
+		
 
 
 	private:
@@ -41,7 +46,7 @@ namespace fchart
 		IBrush *pBrush;
 		std::map<std::wstring,Axis*> axies;
 		std::map<std::wstring,Series*> series;
-		std::vector<Quotation> data;
+		//std::vector<Quotation> data;
 		IBrush *pBrushRed, *pBrushGreen;
 		Chart* pChart;
 
@@ -55,6 +60,7 @@ namespace fchart
 			float x, y;
 			float xlast, ylast;
 		}mouse;
-	
+		/*test#1*/
+		std::map<std::wstring, std::vector<Quotation>> data;
 	};
 }

@@ -50,11 +50,13 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	s.width = rc.right - rc.left;
 	s.ppOut = reinterpret_cast<void**>(&chart);
 	factory(&s);
-	initchart();
+	
 	
 
 	ShowWindow(hWnd, nShow);
 	UpdateWindow(hWnd);
+	
+	initchart();
 	while (GetMessage(&msg,NULL,0,0) > 0)
 	{
 		TranslateMessage(&msg);
@@ -77,15 +79,23 @@ void initchart()
 	chart
 		->SetAreaChartPositionType(fchart::ChartAreaPositionType::Stack)
 		->GetChartArea(L"default")
-		//->SetRect(fchart::makerect(100.f,800.f,800.f,400.f))
+		->CreateDataBuffer(L"buffer")
+		->SetData(L"buffer", q, _countof(q), fchart::SetDataType::Append)
+
 		->CreateSeries(L"price")
-		->SetSeriesType(fchart::SeriesType::Candlestick)
-		->AddData(q, _countof(q));
+		->SetBufferSource(L"buffer")
+		->SetSeriesType(fchart::SeriesType::Candlestick);
 	chart
 		->GetChartArea(L"default")
 		->GetAxis(L"default x")
 		->SetDataType(fchart::AxisDataType::Date)
 		->SetSourceSeries(L"price");
+
+	chart
+		->GetChartArea(L"default")
+		->FocusLast(L"price");
+	
+
 #endif
 #if 0
 	chart
