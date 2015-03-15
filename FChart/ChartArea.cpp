@@ -57,7 +57,7 @@ void ChartArea::Draw(const std::map <std::wstring, std::vector<Quotation>>& buff
 	this->pPlatform->DrawRect(this->rcArea, BrushStyle::Fill);
 
 	for (auto axis : this->axies)
-		axis.second->Draw(buffers.find(L"buffer")->second);
+		axis.second->Draw(buffers.find(axis.second->GetBufferSource())->second);
 	
 
 	for (auto s : this->series)
@@ -155,6 +155,7 @@ IAxis* ChartArea::CreateAxis(const wchar_t* name,const AxisType& type)
 {
 	auto axis = new Axis(this->pPlatform, type,this);
 	this->axies[name] = axis;
+	SetRect(this->rcArea); 
 	return axis;
 }
 IAxis* ChartArea::GetAxis(const wchar_t* name)

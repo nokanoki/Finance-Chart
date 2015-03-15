@@ -80,11 +80,23 @@ void initchart()
 		->SetAreaChartPositionType(fchart::ChartAreaPositionType::Stack)
 		->CreateDataBuffer(L"buffer")
 		->SetData(L"buffer", q, _countof(q), fchart::SetDataType::Append)
-		
 		->GetChartArea(L"default")
 		->CreateSeries(L"price")
 		->SetBufferSource(L"buffer")
 		->SetSeriesType(fchart::SeriesType::Candlestick);
+
+	chart
+		->GetChartArea(L"default")
+		->CreateAxis(L"y", fchart::AxisType::Vertical)
+		->SetBufferSource(L"buffer")
+		;
+	chart
+		->GetChartArea(L"default")
+		->CreateAxis(L"x", fchart::AxisType::Horizontal)
+		->SetBufferSource(L"buffer")
+		->SetDataType(fchart::AxisDataType::Date)
+		
+		;
 
 
 	chart

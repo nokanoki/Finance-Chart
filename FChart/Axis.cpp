@@ -50,11 +50,9 @@ const Rect& Axis::GetLabelRect()
 {
 	return this->rcLabel;
 }
-IAxis* Axis::SetSourceSeries(const wchar_t* name)
+IAxis* Axis::SetBufferSource(const wchar_t* name)
 {
-	if (this->sourceSeries)
-		;// this->sourceSeries;
-	this->sourceSeries = this->chartArea->GetSeries(name);
+	this->bufferName = name;
 	return this;
 }
 void Axis::SetTransformation(const Transformation& trans)
@@ -191,4 +189,9 @@ const AxisType& Axis::GetAxisType()
 float Axis::GetAxisSize()
 {
 	return this->axisSize;
+}
+
+std::wstring Axis::GetBufferSource()
+{
+	return this->bufferName;
 }

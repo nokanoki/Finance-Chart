@@ -15,17 +15,19 @@ namespace fchart
 	public:
 		Axis(IPlatform *pPlatform, const AxisType& type, ChartArea* chartArea);
 		virtual ~Axis();
-		virtual IAxis* SetSourceSeries(const wchar_t* name) override;
+
 		virtual void SetRect(const Rect& rc);
 		const Rect& GetLabelRect();
 		virtual void SetTransformation(const Transformation& trans);
-		/*TEST*/
 		virtual IAxis* SetDataType(const AxisDataType& type);
 		virtual const AxisType& GetAxisType();
 		virtual float GetAxisSize();
 		
 
 		virtual void Draw(const std::vector<Quotation>& data);
+
+		virtual IAxis* SetBufferSource(const wchar_t* name) override; 
+		std::wstring GetBufferSource();
 		
 	private:
 		void DrawVertical(const std::vector<Quotation>& data);
@@ -51,5 +53,6 @@ namespace fchart
 		/*TEST*/
 		float dataPointWidth;
 		ISeries *sourceSeries;
+		std::wstring bufferName;
 	};
 }
