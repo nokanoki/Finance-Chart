@@ -127,20 +127,35 @@ void initchart()
 	
 
 #endif
-#if 0
+#if 1
 	chart
 		->CreateChartArea(L"chartArea")
-		->CreateSeries(L"price")
+		->CreateSeries(L"volume")
 		->SetSeriesType(fchart::SeriesType::Bar)
+		->SetBufferSource(L"buffer")
 
 		;
+	chart
+		->GetChartArea(L"chartArea")
+		->SetXAxisSync(true)
+		->CreateAxis(L"x", fchart::AxisType::Horizontal)
+		->SetBufferSource(L"buffer")
+		->SetDataType(fchart::AxisDataType::Date)
 
+		;
+	chart
+		->GetChartArea(L"chartArea")
+		
+		->FocusLast(L"volume");
+	/*
 	chart
 		->GetChartArea(L"chartArea")
 		->SetXAxisSync(true)
 		->GetAxis(L"default x")
 		->SetDataType(fchart::AxisDataType::Date)
-		->SetSourceSeries(L"price");
+		->SetBufferSource(L"buffer")
+		;
+		*/
 #endif
 #if 0
 	chart
