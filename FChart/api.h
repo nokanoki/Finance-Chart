@@ -87,8 +87,19 @@ namespace fchart
 		virtual IChartArea* FocusLast(const wchar_t* seriesName) = 0;
 
 	};
-	enum class ChartAreaPositionType{ Stack };
+	enum class DataManipulatorType
+	{
+		SimpleMovingAverage
+	};
+	class IDataManipulator
+	{
+	public:
+		virtual void Calc(const Quotation* in, Quotation* out, const size_t& count) = 0;
 
+		
+	};
+
+	enum class ChartAreaPositionType{ Stack };
 	class IChart
 		: public virtual IObject
 	{
@@ -102,9 +113,27 @@ namespace fchart
 
 		virtual IChart* CreateDataBuffer(const wchar_t* name) = 0;
 		virtual IChart* SetData(const wchar_t* bufferName, const Quotation* pData, const int32_t& count, const SetDataType& type) = 0;
-
-
+		virtual IChart* UpdateBuffer(const wchar_t* bufferName) = 0;
+		virtual IChart* SetDataManipulator(IDataManipulator* obj, const wchar_t* inputBufferName, const wchar_t* outputBufferName) = 0;
+		
 	};
+
+	namespace DataManipulator
+	{
+		class ISMA : public IDataManipulator
+		{
+		public:
+	
+		};
+
+		class IFactory
+			: public virtual IObject
+		{
+		public:
+			virtual ~IFactory() = default;
+			virtual ISMA* CreateSMA(const int32_t& val) = 0;
+		};
+	}
 }
 
 
@@ -119,10 +148,12 @@ namespace fchart
 
 
 
-
+#define FCHART_FACTORY_ID_CHART 0
+#define FCHART_FACTORY_ID_DATAMANIMUPATOR_FACTORY 1
 
 typedef struct FCHART_FACTORY_STRUCT_tag
 {
+	int32_t id;
 	void **ppOut;
 #if FCHART_COMPILE_PLATFORM_WIN_D2D1
 	void* hWnd;

@@ -1,7 +1,7 @@
 #include "Chart.h"
 
 using namespace fchart;
-
+#include "DataManipulator.SMA.h"
 
 Chart::Chart(IPlatform *platform, const int32_t& width, const int32_t& height)
 	:pPlatform(platform)
@@ -11,6 +11,8 @@ Chart::Chart(IPlatform *platform, const int32_t& width, const int32_t& height)
 	platform->AddEventMouseMove(this);
 	this->CreateChartArea(L"default");
 	this->transformation = maketransformation();
+
+
 
 }
 Chart::~Chart()
@@ -124,19 +126,49 @@ IChart* Chart::SetAreaChartPositionType(const ChartAreaPositionType& type)
 
 IChart* Chart::CreateDataBuffer(const wchar_t* name)
 {
-	this->data[name];
+	this->data[name].manipulator = nullptr;
 	return this;
 }
 IChart* Chart::SetData(const wchar_t* bufferName, const Quotation* pData, const int32_t& count, const SetDataType& type)
 {
 	if (type == SetDataType::Append)
-		std::copy(pData, pData + count, std::back_inserter(this->data[bufferName]));
+		std::copy(pData, pData + count, std::back_inserter(this->data[bufferName].data));
+
+	this->UpdateBuffer(bufferName);
 
 	return this;
 }
 
+IChart* Chart::UpdateBuffer(const wchar_t* bufferName)
+{
+	auto output = this->data.find(bufferName);
+	if (output->second.manipulator == nullptr)
+		return this;
+	if (output == this->data.end())
+		return this;
+	auto input = this->data.find(output->second.inputBufferName);
+	if (input == this->data.end())
+		return this;
+
+	output->second.data.resize(input->second.data.size());
+
+	output->second.manipulator->Calc(
+		&input->second.data[0],
+		&output->second.data[0],
+		input->second.data.size()
+		);
+
+	return this->UpdateBuffer(output->second.inputBufferName.c_str());
+}
 
 const std::vector<Quotation>& Chart::GetData(const std::wstring& name)
 {
-	return this->data[name];
+	return this->data[name].data;
+}
+
+IChart* Chart::SetDataManipulator(IDataManipulator* obj, const wchar_t* inputBufferName, const wchar_t* outputBufferName)
+{
+	this->data[outputBufferName].manipulator = obj;
+	this->data[outputBufferName].inputBufferName = inputBufferName;
+	return this;
 }

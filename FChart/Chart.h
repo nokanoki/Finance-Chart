@@ -7,6 +7,14 @@
 #include <list>
 namespace fchart
 {
+	struct Buffer
+	{
+		std::vector<Quotation> data;
+		IDataManipulator *manipulator;
+		std::wstring inputBufferName;
+	};
+
+
 	class Chart :
 		public IChart,
 		public IMouseMoveListener,
@@ -31,12 +39,15 @@ namespace fchart
 
 		const std::vector<Quotation>& GetData(const std::wstring& name);
 
+		virtual IChart* SetDataManipulator(IDataManipulator* obj, const wchar_t* inputBufferName, const wchar_t* outputBufferName) override;
+
+		virtual IChart* UpdateBuffer(const wchar_t* bufferName) override;
 	private:
 		Rect rcChart;
 		IPlatform *pPlatform;
 		ChartAreaPositionType chartAreaPositionType;
 		std::list<std::pair<std::wstring,ChartArea*>> chartAreas;
-		std::map <std::wstring, std::vector<Quotation>> data;
+		std::map <std::wstring, Buffer> data;
 
 		//test
 		Transformation transformation;

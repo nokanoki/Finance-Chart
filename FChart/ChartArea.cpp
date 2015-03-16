@@ -25,7 +25,7 @@ ChartArea::~ChartArea()
 	
 	for (auto s : this->series)
 		delete s.second;
-		
+	
 
 	this->pPlatform->Release();
 	this->pBrush->Release();
@@ -51,17 +51,17 @@ void ChartArea::SetBackground(const int32_t& color, bool drawBg)
 {
 	
 }
-void ChartArea::Draw(const std::map <std::wstring, std::vector<Quotation>>& buffers)
+void ChartArea::Draw(const std::map <std::wstring, Buffer>& buffers)
 {
 	this->pPlatform->SetBrush(this->pBrush, BrushStyle::Fill);
 	this->pPlatform->DrawRect(this->rcArea, BrushStyle::Fill);
 
 	for (auto axis : this->axies)
-		axis.second->Draw(buffers.find(axis.second->GetBufferSource())->second);
+		axis.second->Draw(buffers.find(axis.second->GetBufferSource())->second.data);
 	
 
 	for (auto s : this->series)
-		s.second->Draw(buffers.find(s.second->GetBufferSourceName())->second);
+		s.second->Draw(buffers.find(s.second->GetBufferSourceName())->second.data);
 }
 
 

@@ -12,6 +12,7 @@ int32_t(*factory)(FCHART_FACTORY_STRUCT*) = 0;
 
 void initchart();
 fchart::IChart *chart;
+fchart::DataManipulator::IFactory *dataFactory;
 
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShow)
 {
@@ -43,6 +44,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	RECT rc;
 	GetWindowRect(hWnd, &rc);
 	FCHART_FACTORY_STRUCT s;
+	s.id = FCHART_FACTORY_ID_CHART;
 	s.hWnd = hWnd;
 	s.x = 0;
 	s.y = 0;
@@ -51,7 +53,9 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	s.ppOut = reinterpret_cast<void**>(&chart);
 	factory(&s);
 	
-	
+	s.id = FCHART_FACTORY_ID_DATAMANIMUPATOR_FACTORY;
+	s.ppOut = reinterpret_cast<void**>(&dataFactory);
+	factory(&s);
 
 	ShowWindow(hWnd, nShow);
 	UpdateWindow(hWnd);
@@ -76,6 +80,8 @@ void initchart()
 {
 	//TEST TEST TEST TEST TEST 
 #if 1
+
+	//create price series candlestick
 	chart
 		->SetAreaChartPositionType(fchart::ChartAreaPositionType::Stack)
 		->CreateDataBuffer(L"buffer")
@@ -84,6 +90,22 @@ void initchart()
 		->CreateSeries(L"price")
 		->SetBufferSource(L"buffer")
 		->SetSeriesType(fchart::SeriesType::Candlestick);
+
+	//create sma series line
+	auto sma = dataFactory->CreateSMA(10);
+	
+	chart
+		->CreateDataBuffer(L"sma buffer")
+		->GetChartArea(L"default")
+		->CreateSeries(L"sma")
+		->SetSeriesType(fchart::SeriesType::Line)
+		->SetBufferSource(L"sma buffer")
+		;
+	chart
+		->SetDataManipulator(sma, L"buffer", L"sma buffer");
+
+		;
+	chart->UpdateBuffer(L"sma buffer");
 
 	chart
 		->GetChartArea(L"default")

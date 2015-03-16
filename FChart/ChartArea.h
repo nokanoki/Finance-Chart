@@ -7,9 +7,10 @@
 
 namespace fchart
 {
-
+	
 
 	class Chart;
+	struct Buffer;
 	class ChartArea
 		: public IChartArea, public IMouseMoveListener
 	{
@@ -21,7 +22,7 @@ namespace fchart
 		~ChartArea();
 
 		void SetBackground(const int32_t& color, bool drawBg = true);
-		void Draw(const std::map <std::wstring, std::vector<Quotation>>& buffers);
+		void Draw(const std::map <std::wstring, Buffer>& buffers);
 		const Rect& GetRect();
 		void SetTransformation(const Transformation& trans);
 		const Transformation& GetTransformation();
@@ -47,11 +48,7 @@ namespace fchart
 		IBrush *pBrush;
 		std::map<std::wstring, Axis*> axies;
 		std::map<std::wstring, Series*> series;
-		//std::vector<Quotation> data;
-		IBrush *pBrushRed, *pBrushGreen;
 		Chart* pChart;
-
-		/*Test*/
 		bool isXAxisSync;
 		Transformation transformation;
 		struct
