@@ -7,44 +7,48 @@
 
 namespace fchart
 {
-
+	
 
 	class Chart;
-	class ChartArea 
-		: public IChartArea, public virtual Object, public IMouseMoveListener
+	struct Buffer;
+	class ChartArea
+		: public IChartArea, public IMouseMoveListener
 	{
 	public:
-		ChartArea(IPlatform *pPlatform, Chart *pChart);
-		virtual ~ChartArea();
-		
-		virtual IChartArea* SetRect(const Rect& rc);
-		virtual void SetBackground(const int32_t& color, bool drawBg = true);
-		virtual void Draw();
-		virtual void OnMouseMove(const MouseEventArgs& args) override;
-		virtual IAxis* CreateAxis(const wchar_t* name,const AxisType& type) override;
-		virtual IAxis* GetAxis(const wchar_t* name) override;
-		virtual ISeries* CreateSeries(const wchar_t* name) override;
-		virtual ISeries* GetSeries(const wchar_t* name) override;
-		virtual IChartArea* SetXAxisSync(const bool& onOff) override;
-		virtual bool IsXAxisSync() override;
+		ChartArea() = delete;
+		ChartArea(const ChartArea&) = delete;
 
+		ChartArea(IPlatform *pPlatform, Chart *pChart);
+		~ChartArea();
+
+		void SetBackground(const int32_t& color, bool drawBg = true);
+		void Draw(const std::map <std::wstring, Buffer>& buffers);
 		const Rect& GetRect();
 		void SetTransformation(const Transformation& trans);
 		const Transformation& GetTransformation();
-	
 
+
+	public://///////////// event imp
+		virtual void OnMouseMove(const MouseEventArgs& args) override;
+
+	public://////////////// interface imp
+		virtual IAxis* CreateAxis(const wchar_t* name, const AxisType& type) override;
+		virtual IAxis* GetAxis(const wchar_t* name) override;
+		virtual IChartArea* SetRect(const Rect& rc);
+		virtual ISeries* CreateSeries(const wchar_t* name) override;
+		virtual ISeries* GetSeries(const wchar_t* name) override;
+		virtual IChartArea* SetXAxisSync(const bool& onOff) override;
+		virtual IChartArea* FocusLast(const wchar_t* seriesName) override;
+		virtual bool IsXAxisSync() override;
 
 	private:
 		IPlatform *pPlatform;
 		Rect rcArea;
+		Rect rcSeries;
 		IBrush *pBrush;
-		std::map<std::wstring,Axis*> axies;
-		std::map<std::wstring,Series*> series;
-		std::vector<Quotation> data;
-		IBrush *pBrushRed, *pBrushGreen;
+		std::map<std::wstring, Axis*> axies;
+		std::map<std::wstring, Series*> series;
 		Chart* pChart;
-
-		/*Test*/
 		bool isXAxisSync;
 		Transformation transformation;
 		struct
@@ -54,6 +58,7 @@ namespace fchart
 			float x, y;
 			float xlast, ylast;
 		}mouse;
-	
+		
+		std::map<std::wstring, std::vector<Quotation>> data;
 	};
 }

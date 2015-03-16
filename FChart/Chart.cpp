@@ -1,7 +1,7 @@
 #include "Chart.h"
 
 using namespace fchart;
-
+#include "DataManipulator.SMA.h"
 
 Chart::Chart(IPlatform *platform, const int32_t& width, const int32_t& height)
 	:pPlatform(platform)
@@ -12,11 +12,13 @@ Chart::Chart(IPlatform *platform, const int32_t& width, const int32_t& height)
 	this->CreateChartArea(L"default");
 	this->transformation = maketransformation();
 
+
+
 }
 Chart::~Chart()
 {
 	for (auto chartArea : this->chartAreas)
-		chartArea.second->Release();
+		delete chartArea.second;
 	pPlatform->Release();
 }
 void Chart::SetSize(const int32_t& width, const int32_t& height)
@@ -97,51 +99,14 @@ void Chart::Render()
 
 	this->pPlatform->Begin();
 	for (auto chartArea : this->chartAreas)
-		chartArea.second->Draw();
+		chartArea.second->Draw(this->data);
 	this->pPlatform->End();
 }
 
 void Chart::OnMouseMove(const MouseEventArgs& e)
 {
 
-	/*
-	if (e.x < this->rcChart.left
-		|| e.x > this->rcChart.right
-		|| e.y > this->rcChart.top
-		|| e.y < this->rcChart.bottom)
-		return;
-	if (e.buttonState.left)
-	{
-		if (!mouse.isDragging)
-		{
-			mouse.isDragging = true;
-			mouse.x = mouse.xstart = mouse.xlast = e.x;
-			mouse.y = mouse.ystart = mouse.ylast = e.y;
-		}
-		else
-		{
-			mouse.xlast = mouse.x;
-			mouse.ylast = mouse.y;
-			mouse.x = e.x;
-			mouse.y = e.y;
-		}
-	}
-	else
-		mouse.isDragging = false;
-
-	if (mouse.isDragging)
-	{
-		transformation.tx += mouse.x - mouse.xlast;
-		transformation.ty += mouse.y - mouse.ylast;
-
-		for (auto a : this->chartAreas)
-		{
-			auto t = a.second->GetTransformation();
-			t.tx += mouse.x - mouse.xlast;
-			a.second->SetTransformation(t);
-		}
-	}
-	*/
+	
 	this->Render();
 }
 
@@ -152,5 +117,58 @@ std::list<std::pair<std::wstring, ChartArea*>> Chart::GetChartAreas()
 IChart* Chart::SetAreaChartPositionType(const ChartAreaPositionType& type)
 {
 	this->chartAreaPositionType = type;
+	return this;
+}
+
+
+
+
+
+IChart* Chart::CreateDataBuffer(const wchar_t* name)
+{
+	this->data[name].manipulator = nullptr;
+	return this;
+}
+IChart* Chart::SetData(const wchar_t* bufferName, const Quotation* pData, const int32_t& count, const SetDataType& type)
+{
+	if (type == SetDataType::Append)
+		std::copy(pData, pData + count, std::back_inserter(this->data[bufferName].data));
+
+	this->UpdateBuffer(bufferName);
+
+	return this;
+}
+
+IChart* Chart::UpdateBuffer(const wchar_t* bufferName)
+{
+	auto output = this->data.find(bufferName);
+	if (output->second.manipulator == nullptr)
+		return this;
+	if (output == this->data.end())
+		return this;
+	auto input = this->data.find(output->second.inputBufferName);
+	if (input == this->data.end())
+		return this;
+
+	output->second.data.resize(input->second.data.size());
+
+	output->second.manipulator->Calc(
+		&input->second.data[0],
+		&output->second.data[0],
+		input->second.data.size()
+		);
+
+	return this->UpdateBuffer(output->second.inputBufferName.c_str());
+}
+
+const std::vector<Quotation>& Chart::GetData(const std::wstring& name)
+{
+	return this->data[name].data;
+}
+
+IChart* Chart::SetDataManipulator(IDataManipulator* obj, const wchar_t* inputBufferName, const wchar_t* outputBufferName)
+{
+	this->data[outputBufferName].manipulator = obj;
+	this->data[outputBufferName].inputBufferName = inputBufferName;
 	return this;
 }

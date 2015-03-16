@@ -12,6 +12,7 @@ int32_t(*factory)(FCHART_FACTORY_STRUCT*) = 0;
 
 void initchart();
 fchart::IChart *chart;
+fchart::DataManipulator::IFactory *dataFactory;
 
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShow)
 {
@@ -43,6 +44,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	RECT rc;
 	GetWindowRect(hWnd, &rc);
 	FCHART_FACTORY_STRUCT s;
+	s.id = FCHART_FACTORY_ID_CHART;
 	s.hWnd = hWnd;
 	s.x = 0;
 	s.y = 0;
@@ -50,11 +52,15 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	s.width = rc.right - rc.left;
 	s.ppOut = reinterpret_cast<void**>(&chart);
 	factory(&s);
-	initchart();
 	
+	s.id = FCHART_FACTORY_ID_DATAMANIMUPATOR_FACTORY;
+	s.ppOut = reinterpret_cast<void**>(&dataFactory);
+	factory(&s);
 
 	ShowWindow(hWnd, nShow);
 	UpdateWindow(hWnd);
+	
+	initchart();
 	while (GetMessage(&msg,NULL,0,0) > 0)
 	{
 		TranslateMessage(&msg);
@@ -73,26 +79,61 @@ fchart::Quotation q[] =
 void initchart()
 {
 	//TEST TEST TEST TEST TEST 
-	
+#if 1
+
+	//create price series candlestick
 	chart
 		->SetAreaChartPositionType(fchart::ChartAreaPositionType::Stack)
+		->CreateDataBuffer(L"buffer")
+		->SetData(L"buffer", q, _countof(q), fchart::SetDataType::Append)
 		->GetChartArea(L"default")
-		//->SetRect(fchart::makerect(100.f,800.f,800.f,400.f))
 		->CreateSeries(L"price")
-		->AddData(q, _countof(q))
+		->SetBufferSource(L"buffer")
 		->SetSeriesType(fchart::SeriesType::Candlestick);
-	chart
-		->GetChartArea(L"default")
-		->GetAxis(L"default x")
-		->SetDataType(fchart::AxisDataType::Date)
-		->SetSourceSeries(L"price");
+
+	//create sma series line
+	auto sma = dataFactory->CreateSMA(10);
 	
 	chart
+		->CreateDataBuffer(L"sma buffer")
+		->GetChartArea(L"default")
+		->CreateSeries(L"sma")
+		->SetSeriesType(fchart::SeriesType::Line)
+		->SetBufferSource(L"sma buffer")
+		;
+	chart
+		->SetDataManipulator(sma, L"buffer", L"sma buffer");
+
+		;
+	chart->UpdateBuffer(L"sma buffer");
+
+	chart
+		->GetChartArea(L"default")
+		->CreateAxis(L"y", fchart::AxisType::Vertical)
+		->SetBufferSource(L"buffer")
+		;
+	chart
+		->GetChartArea(L"default")
+		->CreateAxis(L"x", fchart::AxisType::Horizontal)
+		->SetBufferSource(L"buffer")
+		->SetDataType(fchart::AxisDataType::Date)
+		
+		;
+
+
+	chart
+		->GetChartArea(L"default")
+		->FocusLast(L"price");
+	
+
+#endif
+#if 0
+	chart
 		->CreateChartArea(L"chartArea")
-		//->SetRect(fchart::makerect(100.f,300.f,800.f,50.f))
 		->CreateSeries(L"price")
-		->AddData(q, _countof(q))
-		->SetSeriesType(fchart::SeriesType::Band);
+		->SetSeriesType(fchart::SeriesType::Bar)
+
+		;
 
 	chart
 		->GetChartArea(L"chartArea")
@@ -100,7 +141,8 @@ void initchart()
 		->GetAxis(L"default x")
 		->SetDataType(fchart::AxisDataType::Date)
 		->SetSourceSeries(L"price");
-
+#endif
+#if 0
 	chart
 		->CreateChartArea(L"chartArea1")
 		->CreateSeries(L"price")
@@ -112,6 +154,7 @@ void initchart()
 		->GetAxis(L"default x")
 		->SetSourceSeries(L"price")
 		->SetDataType(fchart::AxisDataType::Date);
+#endif
 	
 	
 }

@@ -10,29 +10,37 @@ namespace fchart
 	class ChartArea;
 
 	class Axis
-		: public IAxis, public virtual Object
+		: public IAxis
 	{
 	public:
-		Axis(IPlatform *pPlatform, const AxisType& type, ChartArea* chartArea);
-		virtual ~Axis();
-		virtual IAxis* SetSourceSeries(const wchar_t* name) override;
-		virtual void SetRect(const Rect& rc);
-		virtual void SetTransformation(const Transformation& trans);
-		/*TEST*/
-		virtual IAxis* SetDataType(const AxisDataType& type);
-		virtual const AxisType& GetAxisType();
-		virtual float GetAxisSize();
-		
+		Axis() = delete;
+		Axis(const Axis&) = delete;
 
-		virtual void Draw();
+		Axis(IPlatform *pPlatform, const AxisType& type, ChartArea* chartArea);
+		~Axis();
+
+		void SetRect(const Rect& rc);
+		const Rect& GetLabelRect();
+		void SetTransformation(const Transformation& trans);
+		float GetAxisSize();
+		virtual void Draw(const std::vector<Quotation>& data);
+		std::wstring GetBufferSource();
+		const AxisType& GetAxisType();
+
+		//////////////  interface imp
+	public:
+		virtual IAxis* SetDataType(const AxisDataType& type);
+		virtual IAxis* SetBufferSource(const wchar_t* name) override; 
+		
 		
 	private:
-		void DrawVertical();
-		void DrawHorizontal();
+		void DrawVertical(const std::vector<Quotation>& data);
+		void DrawHorizontal(const std::vector<Quotation>& data);
 
 	private:
 		IPlatform *pPlatform;
 		Rect rcAxis;
+		Rect rcLabel;
 		ITextFormat *pTextFormat;
 		IBrush *pTextBrush;
 		Transformation transformation;
@@ -41,13 +49,11 @@ namespace fchart
 		Rect rcUserDefine;
 		AxisDataType axisDataType;
 		ChartArea *chartArea;
-		
 		float lblFactor;
 		float gridFactor;
 		float axisSize;
-
-		/*TEST*/
 		float dataPointWidth;
 		ISeries *sourceSeries;
+		std::wstring bufferName;
 	};
 }

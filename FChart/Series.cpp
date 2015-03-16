@@ -14,7 +14,7 @@ pPlatform(pPlatform), pChartArea(pArea)
 	this->pBrushWhite = this->pPlatform->CreateBrush(makesolidbrushprps(0xffFFffFF));
 	this->transformation = maketransformation();
 	this->seriesType = SeriesType::Line;
-	this->seriesFocus = SeriesFocus::Auto;
+
 	this->dataPointWidth = 10.f; //ref candlestick draw
 }
 Series::~Series()
@@ -29,6 +29,10 @@ void Series::SetRect(const Rect& rc)
 {
 	this->rcSeries = rc;
 }
+const Rect& Series::GetRect()
+{
+	return this->rcSeries;
+}
 void Series::SetTransformation(const Transformation& trans)
 {
 	this->transformation = trans;
@@ -38,50 +42,13 @@ ISeries* Series::SetSeriesType(const SeriesType& type)
 	this->seriesType = type;
 	return this;
 }
-ISeries* Series::AddData(const Quotation *pData, const int32_t& count)
-{
-	std::copy(pData, pData + count, std::back_inserter(this->data));
-	if (this->seriesFocus == SeriesFocus::Auto)
-	{
-		//calc transformation
-		Transformation tr = maketransformation();
-		float halfWidth = (this->rcSeries.right - this->rcSeries.left) / 2.f;
 
-		int32_t dataPointCount = static_cast<int32_t>(halfWidth / this->dataPointWidth);
-		if (dataPointCount <= this->data.size())
-		{
-			//tr.tx = dataPointCount - this->data.size();
-			float maxy = std::numeric_limits<float>::min();
-			float miny = std::numeric_limits<float>::max();
-			for (size_t i = this->data.size() - dataPointCount; i < this->data.size(); i++)
-			{
-				maxy = std::max(this->data[i].high, maxy);
-				miny = std::min(this->data[i].low, miny);
-			}
-			tr.sy = (this->rcSeries.top - this->rcSeries.bottom) / ((maxy - miny) * 2.f);
-		
-			tr.ty = -1.f * ((miny * tr.sy) / 2.f);
-			tr.tx = -((this->data.size() - dataPointCount) * this->dataPointWidth);
-			//normalize
-			tr.sy = static_cast<float>(static_cast<int>(tr.sy));
-			tr.ty = static_cast<float>(static_cast<int>(tr.ty));
-			
-
-		}
-		this->pChartArea->SetTransformation(tr);
-	}
-	return this;
-}
-std::vector<Quotation> Series::GetData()
-{
-	return this->data;
-}
-void Series::Draw()
+void Series::Draw(const std::vector<Quotation>& data)
 {
 	int i = 0;
 	if (this->seriesType == SeriesType::Candlestick)
 	{
-		for (auto q : this->data)
+		for (auto q : data)
 		{
 
 			float y[] = {
@@ -133,7 +100,7 @@ void Series::Draw()
 		bool isFirstSet = false;
 		float xlast , ylast;
 		float i = 0;
-		for (auto q : this->data)
+		for (auto q : data)
 		{
 			if (!isFirstSet)
 			{
@@ -156,14 +123,7 @@ void Series::Draw()
 				continue;
 			}
 			//check top bottom overflows
-			/*if (y > this->rcSeries.top
-				|| y < this->rcSeries.bottom
-				|| ylast > this->rcSeries.top
-				|| ylast < this->rcSeries.bottom)
-			{
-				isFirstSet = false;
-				continue;
-			}*/
+			
 			if (y > this->rcSeries.top) y = this->rcSeries.top;
 			if (y < this->rcSeries.bottom) y = this->rcSeries.bottom;
 			if (ylast > this->rcSeries.top) ylast = this->rcSeries.top;
@@ -181,7 +141,7 @@ void Series::Draw()
 		bool isFirstSet = false;
 		float xlast, ylast0, ylast1;
 		float i = 0;
-		for (auto q : this->data)
+		for (auto q : data)
 		{
 			if (!isFirstSet)
 			{
@@ -223,4 +183,39 @@ void Series::Draw()
 			ylast1 = y1;
 		}
 	}
+	//Not working ref AddData
+	else if (this->seriesType == SeriesType::Bar)
+	{
+		for (auto q :data)
+		{
+
+			
+			float x = (i += 10) * transformation.sx + transformation.tx;
+
+			//check overflow
+			if (x > this->rcSeries.right)
+				break;//nothing else to draw
+			if (x < this->rcSeries.left)
+				continue;//skip that
+		
+
+			this->pPlatform->SetBrush(this->pBrushRed, BrushStyle::Fill);
+			float y = float(q.volume) * this->transformation.sy;// +this->transformation.ty;
+			
+			Rect rc = makerect(x - 3.f, y, x + 3.f, this->rcSeries.bottom);
+			this->pPlatform->DrawRect(rc, BrushStyle::Fill);
+		}
+	}
+}
+
+
+
+ISeries* Series::SetBufferSource(const wchar_t* name)
+{
+	this->bufferName = name;
+	return this;
+}
+std::wstring Series::GetBufferSourceName()
+{
+	return this->bufferName;
 }

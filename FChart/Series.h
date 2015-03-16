@@ -7,23 +7,26 @@
 namespace fchart
 {
 	class ChartArea;
-	enum class SeriesFocus { Auto, Manual };
 	class Series
-		: public ISeries, public virtual Object
+		: public ISeries
 	{
 	public:
+		Series() = delete;
+		Series(const Series&) = delete;
+
 		Series(IPlatform *pPlatform,ChartArea *charArea);
-		virtual ~Series();
-		virtual void SetRect(const Rect& rc);
-		virtual void SetTransformation(const Transformation& trans);
+		~Series();
+
+		void SetRect(const Rect& rc);
+		const Rect& GetRect();
+		void SetTransformation(const Transformation& trans);
+		void Draw(const std::vector<Quotation>& buffer);
+		std::wstring GetBufferSourceName();
+
+		////////////// interface imp
+	public:
 		virtual ISeries* SetSeriesType(const SeriesType& type) override;
-		virtual ISeries* AddData(const Quotation* pData, const int32_t& count) override;
-		virtual void Draw();
-
-	
-
-		//test
-		std::vector<Quotation> GetData();
+		virtual ISeries* SetBufferSource(const wchar_t* bufferName);
 
 	private:
 		IPlatform *pPlatform;
@@ -34,8 +37,7 @@ namespace fchart
 		ChartArea *pChartArea;
 		float dataPointWidth;
 		SeriesType seriesType;
-		SeriesFocus seriesFocus;
-		std::vector<Quotation> data;
 		Transformation transformation;
+		std::wstring bufferName;
 	};
 }

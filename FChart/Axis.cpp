@@ -30,13 +30,31 @@ Axis::~Axis()
 void Axis::SetRect(const Rect& rc)
 {
 	this->rcAxis = rc;
-	
+	this->rcLabel = rc;
+	if (this->axisType == AxisType::Horizontal)
+	{
+		if (this->axisPosition == AxisPosition::Bottom)
+			rcLabel.top = rcLabel.bottom + this->axisSize;
+		else if (this->axisPosition == AxisPosition::Top)
+			rcLabel.bottom = rcLabel.top - this->axisSize;
+	}
+	else if (this->axisType == AxisType::Vertical)
+	{
+		if (this->axisPosition == AxisPosition::Right)
+			rcLabel.left = rcLabel.right - this->axisSize;
+		else if (this->axisPosition == AxisPosition::Left)
+			rcLabel.right = rcLabel.left + this->axisSize;
+	}
 }
-IAxis* Axis::SetSourceSeries(const wchar_t* name)
+
+
+const Rect& Axis::GetLabelRect()
 {
-	if (this->sourceSeries)
-		;// this->sourceSeries;
-	this->sourceSeries = this->chartArea->GetSeries(name);
+	return this->rcLabel;
+}
+IAxis* Axis::SetBufferSource(const wchar_t* name)
+{
+	this->bufferName = name;
 	return this;
 }
 void Axis::SetTransformation(const Transformation& trans)
@@ -46,16 +64,16 @@ void Axis::SetTransformation(const Transformation& trans)
 
 
 
-void Axis::Draw()
+void Axis::Draw(const std::vector<Quotation>& data)
 {
 	//todo merge that
 	if (this->axisType == AxisType::Vertical)
-		this->DrawVertical();
+		this->DrawVertical(data);
 	else
-		this->DrawHorizontal();
+		this->DrawHorizontal(data);
 	
 }
-void Axis::DrawVertical()
+void Axis::DrawVertical(const std::vector<Quotation>& data)
 {
 	float top, bottom, left, right;
 	switch (this->axisPosition)
@@ -96,7 +114,7 @@ void Axis::DrawVertical()
 		pPlatform->DrawLine(makepoint(this->rcAxis.left, i), makepoint(this->rcAxis.right, i), StrokeStyle::Solid);
 	}
 }
-void Axis::DrawHorizontal()
+void Axis::DrawHorizontal(const std::vector<Quotation>& data)
 {
 	float top, bottom, left, right;
 	switch (this->axisPosition)
@@ -124,7 +142,7 @@ void Axis::DrawHorizontal()
 	for (float i = left; i < width; i += this->lblFactor)
 	{
 		std::wstring lbl;
-		std::vector<Quotation> data = dynamic_cast<Series*>(this->sourceSeries)->GetData();
+		
 		switch (this->axisDataType)
 		{
 		case AxisDataType::Price:
@@ -173,4 +191,9 @@ const AxisType& Axis::GetAxisType()
 float Axis::GetAxisSize()
 {
 	return this->axisSize;
+}
+
+std::wstring Axis::GetBufferSource()
+{
+	return this->bufferName;
 }
