@@ -45,6 +45,9 @@
     <ClCompile Include="DataManipulator.Factory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DataManipulator.RelativeStrengthIndex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="api.h">
@@ -78,6 +81,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DataManipulator.Factory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DataManipulator.RelativeStrengthIndex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

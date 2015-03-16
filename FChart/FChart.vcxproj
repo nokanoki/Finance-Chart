@@ -68,6 +68,7 @@
     <ClCompile Include="Chart.cpp" />
     <ClCompile Include="ChartArea.cpp" />
     <ClCompile Include="DataManipulator.Factory.cpp" />
+    <ClCompile Include="DataManipulator.RelativeStrengthIndex.cpp" />
     <ClCompile Include="DataManipulator.SMA.cpp" />
     <ClCompile Include="DirectX2DPlatform.cpp" />
     <ClCompile Include="DllMain.cpp" />
@@ -81,6 +82,7 @@
     <ClInclude Include="Chart.h" />
     <ClInclude Include="ChartArea.h" />
     <ClInclude Include="DataManipulator.Factory.h" />
+    <ClInclude Include="DataManipulator.RelativeStrengthIndex.h" />
     <ClInclude Include="DataManipulator.SMA.h" />
     <ClInclude Include="DirectX2DPlatform.h" />
     <ClInclude Include="Platform.h" />

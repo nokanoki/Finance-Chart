@@ -127,20 +127,35 @@ void initchart()
 	
 
 #endif
-#if 0
+#if 1
 	chart
+		->CreateDataBuffer(L"rsi buffer")
 		->CreateChartArea(L"chartArea")
-		->CreateSeries(L"price")
-		->SetSeriesType(fchart::SeriesType::Bar)
-
+		->CreateSeries(L"rsi")
+		->SetSeriesType(fchart::SeriesType::Line)
+		->SetBufferSource(L"rsi buffer")
 		;
+	auto rsi = dataFactory->CreateRSI();
 
+	chart
+		->SetDataManipulator(rsi, L"buffer", L"rsi buffer")
+		->UpdateBuffer(L"rsi buffer")
+		->GetChartArea(L"chartArea")
+		->CreateAxis(L"y", fchart::AxisType::Vertical)
+		->SetBufferSource(L"rsi buffer")
+		;
 	chart
 		->GetChartArea(L"chartArea")
-		->SetXAxisSync(true)
-		->GetAxis(L"default x")
+		->CreateAxis(L"x", fchart::AxisType::Horizontal)
+		->SetBufferSource(L"rsi buffer")
 		->SetDataType(fchart::AxisDataType::Date)
-		->SetSourceSeries(L"price");
+		
+		;
+	chart
+		->GetChartArea(L"chartArea")
+		->FocusLast(L"rsi")
+		;
+
 #endif
 #if 0
 	chart

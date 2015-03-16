@@ -27,7 +27,6 @@ void SMA::Calc(const Quotation* in, Quotation* out, const size_t& count)
 		float avg = 0.f;
 		for (size_t j = i - sma; j < i; j++)
 			avg += in[j].close;
-		out[i].high = avg / float(sma);
+		out[i].close = avg / float(sma);
 	}
 }
-

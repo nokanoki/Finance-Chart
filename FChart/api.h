@@ -120,11 +120,19 @@ namespace fchart
 
 	namespace DataManipulator
 	{
-		class ISMA : public IDataManipulator
+		class ISMA 
+			: public IDataManipulator
 		{
 		public:
 	
 		};
+
+		class IRelativeStrengthIndex
+			: public IDataManipulator
+		{
+		public:
+		};
+
 
 		class IFactory
 			: public virtual IObject
@@ -132,6 +140,7 @@ namespace fchart
 		public:
 			virtual ~IFactory() = default;
 			virtual ISMA* CreateSMA(const int32_t& val) = 0;
+			virtual IRelativeStrengthIndex* CreateRSI() = 0;
 		};
 	}
 }

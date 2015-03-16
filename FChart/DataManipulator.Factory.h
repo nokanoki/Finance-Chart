@@ -11,6 +11,7 @@ namespace fchart
 		public:
 			virtual ~Factory() override;
 			virtual ISMA* CreateSMA(const int32_t& val) override;
+			virtual IRelativeStrengthIndex* CreateRSI() override;
 		};
 	}
 }

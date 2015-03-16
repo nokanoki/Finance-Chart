@@ -104,12 +104,12 @@ void Series::Draw(const std::vector<Quotation>& data)
 		{
 			if (!isFirstSet)
 			{
-				ylast = q.high * this->transformation.sy + this->transformation.ty;
+				ylast = q.close * this->transformation.sy + this->transformation.ty;
 				xlast = (i += 10) * transformation.sx + transformation.tx;
 				isFirstSet = true;
 				continue;
 			}
-			float y = q.high * this->transformation.sy + this->transformation.ty;
+			float y = q.close * this->transformation.sy + this->transformation.ty;
 			float x = (i += 10) * transformation.sx + transformation.tx;
 
 			//check left right ofverflows

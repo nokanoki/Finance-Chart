@@ -209,7 +209,7 @@ IChartArea* ChartArea::FocusLast(const wchar_t* seriesName)
 	
 	auto l = [](const Quotation& q0,const Quotation& q1)
 	{
-		return q0.high < q1.high;
+		return q0.close < q1.close;
 	};
 
 	//calc last datapoints
@@ -221,9 +221,9 @@ IChartArea* ChartArea::FocusLast(const wchar_t* seriesName)
 
 	auto minmax = std::minmax_element(first, d.end(), l);
 	
-	this->transformation.sy = (this->rcSeries.top - this->rcSeries.bottom) / (minmax.second->high - minmax.first->low);
+	this->transformation.sy = (this->rcSeries.top - this->rcSeries.bottom) / (minmax.second->close - minmax.first->close);
 	this->transformation.tx = -(std::distance(d.begin(), first) * 10.f);
-	this->transformation.ty = -(this->transformation.sy * minmax.first->high);
+	this->transformation.ty = -(this->transformation.sy * minmax.first->close);
 	this->pChart->Render();
 	return this;
 }
