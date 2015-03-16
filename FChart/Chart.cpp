@@ -9,7 +9,6 @@ Chart::Chart(IPlatform *platform, const int32_t& width, const int32_t& height)
 	this->rcChart = makerect(0.f, static_cast<float>(height), static_cast<float>(width), 0.f);
 	platform->AddRef();
 	platform->AddEventMouseMove(this);
-	this->CreateChartArea(L"default");
 	this->transformation = maketransformation();
 
 
