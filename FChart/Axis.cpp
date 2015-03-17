@@ -77,50 +77,38 @@ void Axis::Draw(const std::vector<Quotation>& data)
 }
 void Axis::DrawVertical(const std::vector<Quotation>& data)
 {
-	float top, bottom, left, right;
-	switch (this->axisPosition)
-	{
-	case AxisPosition::Right:
-		left = this->rcAxis.right;
-		right = this->rcAxis.right + this->axisSize;
-		break;
-	case AxisPosition::Left:
-		left = this->rcAxis.left - this->axisSize;
-		right = this->rcAxis.left;
-		break;
-	default:
-		break;
-	}
-	top = this->rcAxis.top;
-	bottom = this->rcAxis.bottom;
 	
-	float heigh = top - bottom;
-	float count = heigh / this->lblFactor;
-	//remove overflow
-	top -= this->lblFactor / 2.f; 
-	bottom += this->lblFactor / 2.f;;
 
 	this->pPlatform->SetTextFormat(this->pTextFormat);
 	this->pPlatform->SetBrush(this->pTextBrush, BrushStyle::Fill);
 
 
-	float starty = (rcAxis.bottom - transformation.ty) / transformation.sy;
-	float endy = (rcAxis.top - transformation.ty) / transformation.sy;
 
-	endy = std::ceilf(endy * 100.f) / 100.f;
-	starty = std::floorf(starty * 100.f) / 100.f;
+	TextFormatProperties prps;
+	this->pTextFormat->GetProperties(prps);
+	//http://stackoverflow.com/questions/326679/choosing-an-attractive-linear-scale-for-a-graphs-y-axis
+	float maxLabels = (this->rcAxis.top - this->rcAxis.bottom) / (prps.fontSize * 1.2f);
+	float start = (this->rcAxis.bottom - this->transformation.ty) / this->transformation.sy;
+	float end = (this->rcAxis.top - this->transformation.ty) / this->transformation.sy;
+	float step = (end - start) / maxLabels;
 
-	float lblf = (endy - starty) / this->lblFactor;
-	lblf = ceilf(lblf * 100.f) / 100.f;
-	for (float i = std::floorf(starty); i < endy; i += lblf)
+	float magPow = std::powf(10.f, std::floorf(std::log10f(step)));
+	float magMsg = roundf(step / magPow + 0.5);
+	step = magMsg * magPow;
+	start = step * std::ceilf(start / step);
+	end = step * std::floorf(end / step);
+
+	
+
+	for (float i = start; i < end; i += step)
 	{
 		std::wstringstream ss;
 		ss << std::fixed << std::setprecision(5) << i;
-		pPlatform->DrawText(makepoint(left, i * transformation.sy + transformation.ty), ss.str().c_str());
+		pPlatform->DrawText(makepoint(this->rcLabel.left + this->axisSize, i * transformation.sy + transformation.ty), ss.str().c_str());
 	}
 
 	//draw grid
-	
+	/*
 	float gridf = ( endy - starty ) / this->gridFactor;
 
 	for (float i = std::floorf(starty); i < endy; i += gridf)
@@ -135,6 +123,7 @@ void Axis::DrawVertical(const std::vector<Quotation>& data)
 			makepoint(this->rcAxis.right, y),
 			StrokeStyle::Solid);
 	}
+	*/
 }
 void Axis::DrawHorizontal(const std::vector<Quotation>& data)
 {
