@@ -1,6 +1,8 @@
 #include "Axis.h"
 #include "ChartArea.h"
 #include <ctime>
+#include <sstream>
+#include <iomanip>
 using namespace fchart;
 
 
@@ -14,7 +16,7 @@ pPlatform(pPlatform), axisType(type), chartArea(pChartArea)
 	this->transformation = maketransformation();
 	this->axisPosition = this->axisType == AxisType::Vertical ? AxisPosition::Right : AxisPosition::Bottom;
 	this->lblFactor = this->axisType == AxisType::Vertical ? 20.f : 70.f;
-	this->gridFactor = 20.f;
+	this->gridFactor = 10.f;
 	this->dataPointWidth = 10.f;//ref Series::Draw candlestick
 	this->axisDataType = AxisDataType::Price;
 	this->axisSize = this->axisType == AxisType::Vertical ? 100.f : 16.f;
@@ -100,18 +102,38 @@ void Axis::DrawVertical(const std::vector<Quotation>& data)
 
 	this->pPlatform->SetTextFormat(this->pTextFormat);
 	this->pPlatform->SetBrush(this->pTextBrush, BrushStyle::Fill);
-	
-	for (float i = bottom; i < top; i += this->lblFactor)
+
+
+	float starty = (rcAxis.bottom - transformation.ty) / transformation.sy;
+	float endy = (rcAxis.top - transformation.ty) / transformation.sy;
+
+	endy = std::ceilf(endy * 100.f) / 100.f;
+	starty = std::floorf(starty * 100.f) / 100.f;
+
+	float lblf = (endy - starty) / this->lblFactor;
+	lblf = ceilf(lblf * 100.f) / 100.f;
+	for (float i = std::floorf(starty); i < endy; i += lblf)
 	{
-		
-		float price = (i - transformation.ty) / transformation.sy;
-		price = static_cast<float>(static_cast<int>(price * 1000.f)) / 1000.f;
-		pPlatform->DrawText(makepoint(left, i + this->lblFactor / 2.f), std::to_wstring(price).c_str());
+		std::wstringstream ss;
+		ss << std::fixed << std::setprecision(5) << i;
+		pPlatform->DrawText(makepoint(left, i * transformation.sy + transformation.ty), ss.str().c_str());
 	}
+
 	//draw grid
-	for (float i = bottom; i < top; i += this->gridFactor)
+	
+	float gridf = ( endy - starty ) / this->gridFactor;
+
+	for (float i = std::floorf(starty); i < endy; i += gridf)
 	{
-		pPlatform->DrawLine(makepoint(this->rcAxis.left, i), makepoint(this->rcAxis.right, i), StrokeStyle::Solid);
+		float y = i * transformation.sy + transformation.ty;
+		if (y < this->rcAxis.bottom
+			|| y> this->rcAxis.top)
+			continue;
+		pPlatform->DrawLine(
+
+			makepoint(this->rcAxis.left, y),
+			makepoint(this->rcAxis.right, y),
+			StrokeStyle::Solid);
 	}
 }
 void Axis::DrawHorizontal(const std::vector<Quotation>& data)
