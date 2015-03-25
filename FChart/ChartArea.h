@@ -27,6 +27,9 @@ namespace fchart
 		void SetTransformation(const Transformation& trans);
 		const Transformation& GetTransformation();
 
+	private:
+		void DrawAxisVertical();
+
 
 	public://///////////// event imp
 		virtual void OnMouseMove(const MouseEventArgs& args) override;
@@ -45,8 +48,11 @@ namespace fchart
 		IPlatform *pPlatform;
 		Rect rcArea;
 		Rect rcSeries;
+		Rect rcAxisY;
 		IBrush *pBrush;
-	
+		
+		ITextFormat *pTextFormat;
+		IBrush *pAxisYTextBrush;
 		std::map<std::wstring, Series*> series;
 		Chart* pChart;
 		bool isXAxisSync;

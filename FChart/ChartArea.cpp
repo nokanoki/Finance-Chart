@@ -1,6 +1,9 @@
 #include "ChartArea.h"
 #include "Chart.h"
 #include <algorithm>
+#include <string>
+#include <sstream>
+#include <iomanip>
 using namespace fchart;
 
 
@@ -14,13 +17,16 @@ pPlatform(pPlatform),pChart(pChart) ,pBrush(nullptr)
 	this->pBrush = this->pPlatform->CreateBrush(makesolidbrushprps(0xff0f0f0f));
 	this->transformation = maketransformation();
 	this->isXAxisSync = false;
-
+	this->pTextFormat = this->pPlatform->CreateTextFormat(maketextprps());
+	this->pAxisYTextBrush = this->pPlatform->CreateBrush(makesolidbrushprps(0xffFFffFF));
 
 }
 ChartArea::~ChartArea()
 {
 
-	
+	this->pTextFormat->Release();
+	this->pAxisYTextBrush->Release();
+
 	for (auto s : this->series)
 		delete s.second;
 	
@@ -37,6 +43,10 @@ IChartArea* ChartArea::SetRect(const Rect& rc)
 
 	this->rcSeries.right -= 100.f;
 	this->rcSeries.bottom += 30.f;
+	
+	this->rcAxisY = rc;
+	this->rcAxisY.left = this->rcAxisY.right - 100.f;
+	
 
 	
 	
@@ -56,7 +66,8 @@ void ChartArea::Draw(const std::map <std::wstring, Buffer>& buffers)
 	for (auto s : this->series)
 		s.second->Draw(buffers.find(s.second->GetBufferSourceName())->second.data);
 	
-	
+	this->DrawAxisVertical();
+
 	
 }
 
@@ -221,3 +232,37 @@ IChartArea* ChartArea::SetYBoundsTest(const float& max, const float& min)
 }
 
 
+void ChartArea::DrawAxisVertical()
+{
+	this->pPlatform->SetTextFormat(this->pTextFormat);
+	this->pPlatform->SetBrush(this->pAxisYTextBrush, BrushStyle::Fill);
+
+
+
+	TextFormatProperties prps;
+	this->pTextFormat->GetProperties(prps);
+	//http://stackoverflow.com/questions/326679/choosing-an-attractive-linear-scale-for-a-graphs-y-axis
+	float maxLabels = (this->rcAxisY.top - this->rcAxisY.bottom) / (prps.fontSize * 1.2f);
+	float start = (this->rcAxisY.bottom - this->transformation.ty) / this->transformation.sy;
+	float end = (this->rcAxisY.top - this->transformation.ty) / this->transformation.sy;
+	float step = (end - start) / maxLabels;
+
+	float magPow = std::powf(10.f, std::floorf(std::log10f(step)));
+	float magMsg = roundf(step / magPow + 0.5f);
+	step = magMsg * magPow;
+	start = step * std::ceilf(start / step);
+	end = step * std::floorf(end / step);
+
+
+
+	for (float i = start; i < end; i += step)
+	{
+		std::wstringstream ss;
+		ss << std::fixed << std::setprecision(5) << i;
+		float y = i * transformation.sy + transformation.ty;
+		y += (prps.fontSize * 1.f) / 2.f;
+		pPlatform->DrawText(
+			makepoint(this->rcAxisY.right -100.f /*this->axisSize */, y),
+			ss.str().c_str());
+	}
+}
