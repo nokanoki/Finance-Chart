@@ -13,15 +13,13 @@ pPlatform(pPlatform),pChart(pChart) ,pBrush(nullptr)
 	this->pPlatform->AddRef();
 	this->pBrush = this->pPlatform->CreateBrush(makesolidbrushprps(0xff0f0f0f));
 	this->transformation = maketransformation();
-
 	this->isXAxisSync = false;
-	
+
 
 }
 ChartArea::~ChartArea()
 {
-	for (auto axis : this->axies)
-		delete axis.second;
+
 	
 	for (auto s : this->series)
 		delete s.second;
@@ -34,14 +32,13 @@ IChartArea* ChartArea::SetRect(const Rect& rc)
 {
 	this->rcArea = rc;
 	this->rcSeries = rc;
-	for (auto axis : this->axies)
-	{
-		if (axis.second->GetAxisType() == AxisType::Vertical)
-			rcSeries.right -= axis.second->GetAxisSize();
-		else
-			rcSeries.bottom += axis.second->GetAxisSize();
-		axis.second->SetRect(rcSeries);
-	}
+
+
+
+	this->rcSeries.right -= 100.f;
+	this->rcSeries.bottom += 30.f;
+
+	
 	
 	for (auto s : this->series)
 		s.second->SetRect(rcSeries);
@@ -56,13 +53,13 @@ void ChartArea::Draw(const std::map <std::wstring, Buffer>& buffers)
 	this->pPlatform->SetBrush(this->pBrush, BrushStyle::Fill);
 	this->pPlatform->DrawRect(this->rcArea, BrushStyle::Fill);
 
-	for (auto axis : this->axies)
-		axis.second->Draw(buffers.find(axis.second->GetBufferSource())->second.data);
-	
-
 	for (auto s : this->series)
 		s.second->Draw(buffers.find(s.second->GetBufferSourceName())->second.data);
+	
+	
+	
 }
+
 
 
 void ChartArea::OnMouseMove(const MouseEventArgs& e)
@@ -131,8 +128,7 @@ void ChartArea::OnMouseMove(const MouseEventArgs& e)
 			}
 		}
 	}
-	for (auto axis : this->axies)
-		axis.second->SetTransformation(transformation);
+
 	for (auto s : this->series)
 		s.second->SetTransformation(transformation);
 
@@ -151,17 +147,7 @@ void ChartArea::OnMouseMove(const MouseEventArgs& e)
 	}
 }
 
-IAxis* ChartArea::CreateAxis(const wchar_t* name,const AxisType& type)
-{
-	auto axis = new Axis(this->pPlatform, type,this);
-	this->axies[name] = axis;
-	SetRect(this->rcArea); 
-	return axis;
-}
-IAxis* ChartArea::GetAxis(const wchar_t* name)
-{
-	return this->axies[name];
-}
+
 ISeries* ChartArea::CreateSeries(const wchar_t* name)
 {
 	auto s = new Series(this->pPlatform,this);
@@ -181,8 +167,7 @@ const Rect& ChartArea::GetRect()
 void ChartArea::SetTransformation(const Transformation& trans)
 {
 	this->transformation = trans;
-	for (auto axis : this->axies)
-		axis.second->SetTransformation(transformation);
+	
 	for (auto s : this->series)
 		s.second->SetTransformation(transformation);
 }
@@ -234,3 +219,5 @@ IChartArea* ChartArea::SetYBoundsTest(const float& max, const float& min)
 	this->transformation.ty = min;
 	return this;
 }
+
+

@@ -77,8 +77,7 @@ namespace fchart
 	class IChartArea
 	{
 	public:
-		virtual IAxis* CreateAxis(const wchar_t* name, const AxisType& type) = 0;
-		virtual IAxis* GetAxis(const wchar_t* name) = 0;
+
 		virtual IChartArea* SetRect(const Rect& rc) = 0;
 		virtual ISeries* CreateSeries(const wchar_t* name) = 0;
 		virtual ISeries* GetSeries(const wchar_t* name) = 0;

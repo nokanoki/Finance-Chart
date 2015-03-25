@@ -79,72 +79,17 @@ fchart::Quotation q[] =
 void initchart()
 {
 	//TEST TEST TEST TEST TEST 
-
-	auto sma = dataFactory->CreateSMA(20);
-	auto rsi = dataFactory->CreateRSI();
+	chart
+		->CreateDataBuffer(L"data")
+		->CreateChartArea(L"default")
+		->CreateSeries(L"price series")
+		->SetBufferSource(L"data")
+		->SetSeriesType(fchart::SeriesType::Candlestick);
 
 	chart
-		->CreateDataBuffer(L"data buffer")
-		->CreateDataBuffer(L"rsi buffer")
-		->CreateDataBuffer(L"sma buffer")
-		->SetDataManipulator(sma, L"data buffer", L"sma buffer")
-		->SetDataManipulator(rsi, L"data buffer", L"rsi buffer")
-		->SetAreaChartPositionType(fchart::ChartAreaPositionType::Stack)
-		;
-	
-	auto topArea = chart->CreateChartArea(L"top area");
-
-	topArea
-		->CreateSeries(L"price series")
-		->SetBufferSource(L"data buffer")
-		->SetSeriesType(fchart::SeriesType::Candlestick)
-		;
-	topArea
-		->CreateSeries(L"sma series")
-		->SetBufferSource(L"sma buffer")
-		->SetSeriesType(fchart::SeriesType::Line)
-		;
-	topArea
-		->CreateAxis(L"x", fchart::AxisType::Horizontal)
-		->SetBufferSource(L"data buffer")
-		->SetDataType(fchart::AxisDataType::Date)
-		;
-	topArea
-		->CreateAxis(L"y", fchart::AxisType::Vertical)
-		->SetBufferSource(L"data buffer")
-		->SetDataType(fchart::AxisDataType::Price)
-		;
-#if 0
-
-	auto botArea = chart->CreateChartArea(L"bot area");
-	botArea
-		->CreateSeries(L"rsi series")
-		->SetBufferSource(L"rsi buffer")
-		->SetSeriesType(fchart::SeriesType::Line)
-		;
-	botArea
-		->CreateAxis(L"x", fchart::AxisType::Horizontal)
-		->SetBufferSource(L"rsi buffer")
-		->SetDataType(fchart::AxisDataType::Date)
-		;
-	botArea
-		->CreateAxis(L"y", fchart::AxisType::Vertical)
-		->SetBufferSource(L"rsi buffer")
-		->SetDataType(fchart::AxisDataType::Price)
-		;
-
-#endif // 0
-
-	//feed data
-	chart->SetData(L"data buffer", q, _countof(q), fchart::SetDataType::Append)
-		->UpdateBuffer(L"sma buffer")
-		->UpdateBuffer(L"rsi buffer")
-		;
-	topArea
-		->SetYBoundsTest(13.f, 5.f);
-	//topArea->FocusLast(L"price series");
-	//botArea->FocusLast(L"rsi series");
-	//botArea->SetYBoundsTest(100.f, 0.f);
+		->SetData(L"data", q, _countof(q), fchart::SetDataType::Append)
+		->GetChartArea(L"default")
+		->FocusLast(L"price series");
 }
 
 LRESULT CALLBACK proc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)

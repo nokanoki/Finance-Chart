@@ -31,6 +31,7 @@ Axis::~Axis()
 
 void Axis::SetRect(const Rect& rc)
 {
+	
 	this->rcAxis = rc;
 	this->rcLabel = rc;
 	if (this->axisType == AxisType::Horizontal)

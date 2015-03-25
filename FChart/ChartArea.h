@@ -32,8 +32,7 @@ namespace fchart
 		virtual void OnMouseMove(const MouseEventArgs& args) override;
 
 	public://////////////// interface imp
-		virtual IAxis* CreateAxis(const wchar_t* name, const AxisType& type) override;
-		virtual IAxis* GetAxis(const wchar_t* name) override;
+	
 		virtual IChartArea* SetRect(const Rect& rc);
 		virtual ISeries* CreateSeries(const wchar_t* name) override;
 		virtual ISeries* GetSeries(const wchar_t* name) override;
@@ -47,7 +46,7 @@ namespace fchart
 		Rect rcArea;
 		Rect rcSeries;
 		IBrush *pBrush;
-		std::map<std::wstring, Axis*> axies;
+	
 		std::map<std::wstring, Series*> series;
 		Chart* pChart;
 		bool isXAxisSync;
@@ -60,6 +59,5 @@ namespace fchart
 			float xlast, ylast;
 		}mouse;
 		
-		std::map<std::wstring, std::vector<Quotation>> data;
 	};
 }
