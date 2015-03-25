@@ -227,3 +227,10 @@ IChartArea* ChartArea::FocusLast(const wchar_t* seriesName)
 	this->pChart->Render();
 	return this;
 }
+
+IChartArea* ChartArea::SetYBoundsTest(const float& max, const float& min)
+{
+	this->transformation.sy = (this->rcSeries.top - this->rcSeries.bottom) / (max - min);
+	this->transformation.ty = min;
+	return this;
+}

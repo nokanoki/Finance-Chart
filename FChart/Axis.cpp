@@ -93,7 +93,7 @@ void Axis::DrawVertical(const std::vector<Quotation>& data)
 	float step = (end - start) / maxLabels;
 
 	float magPow = std::powf(10.f, std::floorf(std::log10f(step)));
-	float magMsg = roundf(step / magPow + 0.5);
+	float magMsg = roundf(step / magPow + 0.5f);
 	step = magMsg * magPow;
 	start = step * std::ceilf(start / step);
 	end = step * std::floorf(end / step);
@@ -104,18 +104,22 @@ void Axis::DrawVertical(const std::vector<Quotation>& data)
 	{
 		std::wstringstream ss;
 		ss << std::fixed << std::setprecision(5) << i;
-		pPlatform->DrawText(makepoint(this->rcLabel.left + this->axisSize, i * transformation.sy + transformation.ty), ss.str().c_str());
+		float y = i * transformation.sy + transformation.ty;
+		y += (prps.fontSize * 1.f) / 2.f;
+		pPlatform->DrawText(
+			makepoint(this->rcLabel.left + this->axisSize, y ),
+			ss.str().c_str());
 	}
 
 	//draw grid
-	/*
-	float gridf = ( endy - starty ) / this->gridFactor;
+	
 
-	for (float i = std::floorf(starty); i < endy; i += gridf)
+#if 0
+	for (float i = start; i < end; i += step)
 	{
 		float y = i * transformation.sy + transformation.ty;
 		if (y < this->rcAxis.bottom
-			|| y> this->rcAxis.top)
+			|| y > this->rcAxis.top)
 			continue;
 		pPlatform->DrawLine(
 
@@ -123,7 +127,9 @@ void Axis::DrawVertical(const std::vector<Quotation>& data)
 			makepoint(this->rcAxis.right, y),
 			StrokeStyle::Solid);
 	}
-	*/
+#endif // 0
+
+	
 }
 void Axis::DrawHorizontal(const std::vector<Quotation>& data)
 {

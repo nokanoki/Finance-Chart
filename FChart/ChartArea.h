@@ -39,6 +39,7 @@ namespace fchart
 		virtual ISeries* GetSeries(const wchar_t* name) override;
 		virtual IChartArea* SetXAxisSync(const bool& onOff) override;
 		virtual IChartArea* FocusLast(const wchar_t* seriesName) override;
+		virtual IChartArea* SetYBoundsTest(const float& max, const float& min) override;
 		virtual bool IsXAxisSync() override;
 
 	private:

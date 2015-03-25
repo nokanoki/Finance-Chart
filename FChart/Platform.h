@@ -33,7 +33,7 @@ namespace fchart
 	{
 		TextFormatProperties tfp;
 		wcscpy_s(tfp.family, L"Calibria");
-		tfp.fontSize = 10.f;
+		tfp.fontSize = 12.f;
 		return tfp;
 	}
 	struct MouseButtonsState

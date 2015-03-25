@@ -85,6 +85,7 @@ namespace fchart
 		virtual IChartArea* SetXAxisSync(const bool& onOff) = 0;
 		virtual bool IsXAxisSync() = 0;
 		virtual IChartArea* FocusLast(const wchar_t* seriesName) = 0;
+		virtual IChartArea* SetYBoundsTest(const float& max, const float& min) = 0;
 
 	};
 	enum class DataManipulatorType

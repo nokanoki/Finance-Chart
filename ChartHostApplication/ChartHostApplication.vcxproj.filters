@@ -15,11 +15,11 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\FChart\testquotes.array" />
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\FChart\testquotes.array" />
   </ItemGroup>
 </Project>
