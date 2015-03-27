@@ -18,7 +18,7 @@ pPlatform(pPlatform),pChart(pChart) ,pBrush(nullptr)
 	this->transformation = maketransformation();
 
 
-	this->isXAxisSync = false;
+	this->isXAxisSync = true;
 	this->pTextFormat = this->pPlatform->CreateTextFormat(maketextprps());
 	this->pAxisYTextBrush = this->pPlatform->CreateBrush(makesolidbrushprps(0xffFFffFF));
 

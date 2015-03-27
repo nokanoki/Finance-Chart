@@ -82,14 +82,12 @@ void initchart()
 	chart
 		->CreateDataBuffer(L"data")
 		->CreateChartArea(L"default")
-		->SetXAxisSync(true)
 		->CreateSeries(L"price series")
 		->SetBufferSource(L"data")
 		->SetSeriesType(fchart::SeriesType::Candlestick);
 
 	chart
 		->CreateChartArea(L"ca")
-		->SetXAxisSync(true)
 		->CreateSeries(L"line")
 		->SetSeriesType(fchart::SeriesType::Line)
 		->SetBufferSource(L"data");
