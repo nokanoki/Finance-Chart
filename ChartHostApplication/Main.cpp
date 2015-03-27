@@ -82,14 +82,25 @@ void initchart()
 	chart
 		->CreateDataBuffer(L"data")
 		->CreateChartArea(L"default")
+		->SetXAxisSync(true)
 		->CreateSeries(L"price series")
 		->SetBufferSource(L"data")
 		->SetSeriesType(fchart::SeriesType::Candlestick);
 
 	chart
+		->CreateChartArea(L"ca")
+		->SetXAxisSync(true)
+		->CreateSeries(L"line")
+		->SetSeriesType(fchart::SeriesType::Line)
+		->SetBufferSource(L"data");
+
+	chart
 		->SetData(L"data", q, _countof(q), fchart::SetDataType::Append)
 		->GetChartArea(L"default")
 		->FocusLast(L"price series");
+	chart
+		->GetChartArea(L"ca")
+		->FocusLast(L"line");
 }
 
 LRESULT CALLBACK proc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)

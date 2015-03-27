@@ -29,6 +29,7 @@ namespace fchart
 
 	private:
 		void DrawAxisVertical();
+		void DrawAxisHorizontal(const std::vector<Quotation>& data);
 
 
 	public://///////////// event imp
@@ -49,6 +50,7 @@ namespace fchart
 		Rect rcArea;
 		Rect rcSeries;
 		Rect rcAxisY;
+		Rect rcAxisX;
 		IBrush *pBrush;
 		
 		ITextFormat *pTextFormat;

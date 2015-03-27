@@ -16,6 +16,8 @@ pPlatform(pPlatform),pChart(pChart) ,pBrush(nullptr)
 	this->pPlatform->AddRef();
 	this->pBrush = this->pPlatform->CreateBrush(makesolidbrushprps(0xff0f0f0f));
 	this->transformation = maketransformation();
+
+
 	this->isXAxisSync = false;
 	this->pTextFormat = this->pPlatform->CreateTextFormat(maketextprps());
 	this->pAxisYTextBrush = this->pPlatform->CreateBrush(makesolidbrushprps(0xffFFffFF));
@@ -46,6 +48,11 @@ IChartArea* ChartArea::SetRect(const Rect& rc)
 	
 	this->rcAxisY = rc;
 	this->rcAxisY.left = this->rcAxisY.right - 100.f;
+	this->rcAxisY.bottom += 30.f;
+
+	this->rcAxisX = rc;
+	this->rcAxisX.top = this->rcAxisX.bottom + 30.f;
+	this->rcAxisX.right -= 100.f;
 	
 
 	
@@ -67,6 +74,10 @@ void ChartArea::Draw(const std::map <std::wstring, Buffer>& buffers)
 		s.second->Draw(buffers.find(s.second->GetBufferSourceName())->second.data);
 	
 	this->DrawAxisVertical();
+	if (!buffers.empty())
+	{
+		this->DrawAxisHorizontal(buffers.begin()->second.data);
+	}
 
 	
 }
@@ -151,7 +162,7 @@ void ChartArea::OnMouseMove(const MouseEventArgs& e)
 			{
 				auto tr = c.second->GetTransformation();
 				tr.tx = transformation.tx;
-				tr.ty = transformation.ty;
+				//tr.ty = transformation.ty;
 				c.second->SetTransformation(tr);
 			}
 		}
@@ -264,5 +275,32 @@ void ChartArea::DrawAxisVertical()
 		pPlatform->DrawText(
 			makepoint(this->rcAxisY.right -100.f /*this->axisSize */, y),
 			ss.str().c_str());
+	}
+}
+void ChartArea::DrawAxisHorizontal(const std::vector<Quotation>& data)
+{
+
+
+	float width = this->rcAxisX.right - this->rcAxisX.left;
+	float count = width / 100.f;
+
+	this->pPlatform->SetTextFormat(this->pTextFormat);
+	this->pPlatform->SetBrush(this->pAxisYTextBrush, BrushStyle::Fill);
+
+	for (float i = this->rcAxisX.left; i < width; i += 100.f)
+	{
+		std::wstring lbl;
+
+
+		size_t idx = static_cast<size_t>(((i - this->transformation.tx) / this->transformation.sx) / 10.f);
+		if (idx <= 0 || idx >= data.size())
+			break;
+		wchar_t buf[256] = { 0 };
+		tm t;
+		gmtime_s(&t, &data[idx].time);
+		std::wcsftime(buf, 256, L"%x", &t);
+		lbl = buf;
+
+		pPlatform->DrawText(makepoint(i, this->rcAxisX.top), lbl.c_str());
 	}
 }

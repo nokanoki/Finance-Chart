@@ -95,7 +95,7 @@ void Series::Draw(const std::vector<Quotation>& data)
 	}
 	else if (this->seriesType == SeriesType::Line)
 	{
-		this->pPlatform->SetBrush(this->pBrushWhite, BrushStyle::Outline);
+		this->pPlatform->SetBrush(this->pBrushWhite, BrushStyle::Fill);
 		
 		bool isFirstSet = false;
 		float xlast , ylast;
